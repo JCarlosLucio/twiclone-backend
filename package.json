@@ -1,0 +1,33 @@
+{
+  "name": "twiclone-backend",
+  "version": "0.0.1",
+  "description": "backen for twiclone",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JCarlosLucio/twiclone-backend.git"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "mongodb"
+  ],
+  "author": "JCarlosLucio",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JCarlosLucio/twiclone-backend/issues"
+  },
+  "homepage": "https://github.com/JCarlosLucio/twiclone-backend#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "nodemon": "^2.0.12"
+  }
+}
