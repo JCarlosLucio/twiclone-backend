@@ -1,8 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { MONGODB_URI } = require('./utils/config');
+const logger = require('./utils/logger');
 
 const app = express();
-const { MONGODB_URI } = require('./utils/config');
 
 /**Connect to mongoDB */
 mongoose
@@ -13,10 +14,10 @@ mongoose
     useCreateIndex: true,
   })
   .then(() => {
-    console.log('connected to mongoDB');
+    logger.info('connected to mongoDB');
   })
   .catch((error) => {
-    console.error('error connecting to mongoDB', error);
+    logger.error('error connecting to mongoDB', error);
   });
 
 app.get('/ping', (_, res) => {
