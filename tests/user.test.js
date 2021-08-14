@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const supertest = require('supertest');
+
 const app = require('../app');
+const User = require('../models/user');
+const { usersInDb } = require('./test_helper');
 
 const api = supertest(app);
-
-const User = require('../models/user');
 
 describe('Users', () => {
   beforeEach(async () => {
@@ -34,6 +35,25 @@ describe('Users', () => {
       const response = await api.get('/api/users');
       const properties = Object.keys(response.body[0]);
       expect(properties).not.toContain('password');
+    });
+  });
+
+  describe('creating users', () => {
+    test('creation should succed with status 200', async () => {
+      const newUser = {
+        email: 'create@example.com',
+        password: '1234',
+      };
+
+      await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+      const usersAfter = await usersInDb();
+
+      expect(usersAfter).toHaveLength(2);
     });
   });
 });
