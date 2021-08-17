@@ -1,3 +1,7 @@
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../utils/config');
+const User = require('../models/user');
+
 const tokenExtractor = (req, _res, next) => {
   const authorization = req.get('authorization');
 
@@ -10,4 +14,18 @@ const tokenExtractor = (req, _res, next) => {
   next();
 };
 
-module.exports = { tokenExtractor };
+const userExtractor = (req, res, next) => {
+  // req.token is added by tokenExtractor middleware
+  const decodedToken = jwt.verify(req.token, JWT_SECRET);
+  const user = User.findById(decodedToken.id);
+
+  if (!req.token || !decodedToken.id || !user) {
+    return res.status(401).json({ error: 'token missing or invalid' });
+  }
+
+  req.user = user;
+
+  next();
+};
+
+module.exports = { tokenExtractor, userExtractor };
