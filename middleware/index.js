@@ -28,4 +28,8 @@ const userExtractor = (req, res, next) => {
   next();
 };
 
-module.exports = { tokenExtractor, userExtractor };
+const unknownEndpoint = (_req, res) => {
+  res.status(404).send({ error: 'unknown endpoint' });
+};
+
+module.exports = { tokenExtractor, userExtractor, unknownEndpoint };
