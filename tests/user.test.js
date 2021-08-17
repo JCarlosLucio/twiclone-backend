@@ -16,7 +16,8 @@ describe('Users', () => {
     const password = await bcrypt.hash('test', saltRounds);
     const user = new User({ email: 'test@example.com', password });
     await user.save();
-  });
+    // extended timeout to avoid failing tests for timeout when running beforeEach
+  }, 100000);
 
   describe('getting users', () => {
     test('should return users as json', async () => {
@@ -60,4 +61,5 @@ describe('Users', () => {
 
 afterAll(() => {
   mongoose.connection.close();
-});
+  // extended timeout to avoid "Jest did not exit one second after the test run has completed" warning (although it still may show warning sometimes)
+}, 100000);
