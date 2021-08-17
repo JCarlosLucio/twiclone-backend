@@ -1,6 +1,18 @@
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../utils/config');
+const logger = require('../utils/logger');
 const User = require('../models/user');
+
+const errorHandler = (error, _req, res, next) => {
+  logger.error(error.message);
+  if (error.name === 'CastError') {
+    return res.status(400).send({ error: 'malformatted id' });
+  } else if (error.name === 'ValidationError') {
+    return res.status(400).json({ error: error.message });
+  }
+
+  next(error);
+};
 
 const tokenExtractor = (req, _res, next) => {
   const authorization = req.get('authorization');
@@ -32,4 +44,9 @@ const unknownEndpoint = (_req, res) => {
   res.status(404).send({ error: 'unknown endpoint' });
 };
 
-module.exports = { tokenExtractor, userExtractor, unknownEndpoint };
+module.exports = {
+  errorHandler,
+  tokenExtractor,
+  userExtractor,
+  unknownEndpoint,
+};

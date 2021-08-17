@@ -12,7 +12,6 @@ connectDB();
 /** Middlewares */
 app.use(express.json());
 app.use(middleware.tokenExtractor);
-app.use(middleware.userExtractor);
 
 /** Routes */
 app.use('/api/users', usersRouter);
@@ -24,5 +23,6 @@ app.get('/ping', (_, res) => {
 });
 
 app.use(middleware.unknownEndpoint);
+app.use(middleware.errorHandler);
 
 module.exports = app;
