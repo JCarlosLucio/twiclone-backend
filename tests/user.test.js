@@ -57,6 +57,33 @@ describe('Users', () => {
       expect(usersAfter).toHaveLength(2);
     });
   });
+
+  describe('logging in', () => {
+    test('should return token if there is email/password', async () => {
+      const toLogin = {
+        email: 'test@example.com',
+        password: 'test',
+      };
+
+      const response = await api
+        .post('/api/login')
+        .send(toLogin)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+      const properties = Object.keys(response.body);
+      expect(properties).toContain('token');
+    });
+
+    test('should fail with 401 Unauthorized if email/password are wrong', async () => {
+      const toLogin = {
+        email: 'test@example.com',
+        password: 'wrong',
+      };
+
+      await api.post('/api/login').send(toLogin).expect(401);
+    });
+  });
 });
 
 afterAll(() => {
