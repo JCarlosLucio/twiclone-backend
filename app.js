@@ -1,4 +1,5 @@
 const express = require('express');
+require('express-async-errors');
 const connectDB = require('./db');
 const usersRouter = require('./controllers/users');
 const loginRouter = require('./controllers/login');
