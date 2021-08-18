@@ -46,7 +46,7 @@ describe('Tweets', () => {
   });
 
   describe('creating tweets', () => {
-    test.only('should add a tweet', async () => {
+    test('should add a tweet', async () => {
       const response = await api
         .post('/api/login')
         .send({ email: 'test@example.com', password: 'test' });
