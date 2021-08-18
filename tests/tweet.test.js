@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const supertest = require('supertest');
 
 const app = require('../app');
-const { initialTweets } = require('./test_helper');
+const { initialTweets, tweetsInDb } = require('./test_helper');
 const Tweet = require('../models/tweet');
 const User = require('../models/user');
 
@@ -42,6 +42,33 @@ describe('Tweets', () => {
         Object.keys(tweet.user)
       );
       expect(userProps).not.toContain('password');
+    });
+  });
+
+  describe('creating tweets', () => {
+    test.only('should add a tweet', async () => {
+      const response = await api
+        .post('/api/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const newTweet = {
+        content: 'Creating a tweet from a test',
+      };
+
+      await api
+        .post('/api/tweets')
+        .set('Authorization', token)
+        .send(newTweet)
+        .expect(201)
+        .expect('Content-Type', /application\/json/);
+
+      const tweetsAfter = await tweetsInDb();
+      const contents = tweetsAfter.map((tweet) => tweet.content);
+
+      expect(tweetsAfter).toHaveLength(initialTweets.length + 1);
+      expect(contents).toContain(newTweet.content);
     });
   });
 });

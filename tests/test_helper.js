@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Tweet = require('../models/tweet');
 
 const initialTweets = [
   {
@@ -24,4 +25,9 @@ const usersInDb = async () => {
   return users.map((user) => user.toJSON());
 };
 
-module.exports = { initialTweets, usersInDb };
+const tweetsInDb = async () => {
+  const tweets = await Tweet.find({});
+  return tweets.map((tweet) => tweet.toJSON());
+};
+
+module.exports = { initialTweets, usersInDb, tweetsInDb };
