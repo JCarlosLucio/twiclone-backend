@@ -1,13 +1,16 @@
 const mongoose = require('mongoose');
 
-const tweetSchema = new mongoose.Schema({
-  content: { type: String, required: true, maxLength: 280 },
-  user: {
-    required: true,
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+const tweetSchema = new mongoose.Schema(
+  {
+    content: { type: String, required: true, maxLength: 280 },
+    user: {
+      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
   },
-});
+  { timestamps: true }
+);
 
 tweetSchema.set('toJSON', {
   transform: (document, returnedObject) => {

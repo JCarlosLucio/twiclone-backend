@@ -26,10 +26,10 @@ const tokenExtractor = (req, _res, next) => {
   next();
 };
 
-const userExtractor = (req, res, next) => {
+const userExtractor = async (req, res, next) => {
   // req.token is added by tokenExtractor middleware
   const decodedToken = jwt.verify(req.token, JWT_SECRET);
-  const user = User.findById(decodedToken.id);
+  const user = await User.findById(decodedToken.id);
 
   if (!req.token || !decodedToken.id || !user) {
     return res.status(401).json({ error: 'token missing or invalid' });
