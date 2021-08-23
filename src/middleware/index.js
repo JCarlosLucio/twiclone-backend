@@ -4,7 +4,7 @@ const logger = require('../utils/logger');
 const User = require('../models/user');
 
 const errorHandler = (error, _req, res, next) => {
-  logger.error(error.message);
+  logger.error(error);
   if (error.name === 'CastError') {
     return res.status(400).send({ error: 'malformatted id' });
   } else if (error.name === 'ValidationError') {
@@ -48,9 +48,20 @@ const unknownEndpoint = (_req, res) => {
   res.status(404).send({ error: 'unknown endpoint' });
 };
 
+const validate = (schema) => async (req, _res, next) => {
+  await schema.validate({
+    body: req.body,
+    query: req.query,
+    params: req.params,
+  });
+
+  next();
+};
+
 module.exports = {
   errorHandler,
   tokenExtractor,
   userExtractor,
   unknownEndpoint,
+  validate,
 };
