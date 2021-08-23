@@ -1,5 +1,6 @@
 const router = require('express').Router();
-const { userExtractor } = require('../middleware');
+const { userExtractor, validate } = require('../middleware');
+const { createTweet } = require('../validations/tweets');
 const Tweet = require('../models/tweet');
 
 router.get('/', async (_req, res) => {
@@ -10,7 +11,7 @@ router.get('/', async (_req, res) => {
   res.json(tweets);
 });
 
-router.post('/', userExtractor, async (req, res) => {
+router.post('/', userExtractor, validate(createTweet), async (req, res) => {
   const user = req.user; // comes from userExtractor middleware
   const { content } = req.body;
 

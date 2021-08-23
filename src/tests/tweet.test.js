@@ -70,6 +70,39 @@ describe('Tweets', () => {
       expect(tweetsAfter).toHaveLength(initialTweets.length + 1);
       expect(contents).toContain(newTweet.content);
     });
+
+    test('should fail with 400 Bad Request if content is missing', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      await api
+        .post('/api/tweets')
+        .set('Authorization', token)
+        .send({})
+        .expect(400);
+    });
+
+    test('should fail with 400 Bad Request if content is too long', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const newTweet = {
+        content:
+          'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Unde voluptatum voluptate velit mollitia harum nulla eum sint, iusto veritatis optio. Dolorem at enim perferendis dolorum totam nesciunt, aut quisquam quibusdam vero, non iure recusandae magni quam suscipit illum optio quidem, rerum sapiente!',
+      };
+
+      await api
+        .post('/api/tweets')
+        .set('Authorization', token)
+        .send(newTweet)
+        .expect(400);
+    });
   });
 });
 
