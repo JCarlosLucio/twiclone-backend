@@ -1,0 +1,30 @@
+// REGISTER 
+POST http://localhost:3001/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "mail@example.com",
+  "password": "1234"
+}
+
+
+// LOGIN
+POST http://localhost:3001/api/auth/login 
+Content-Type: application/json
+
+{
+  "email": "mail@example.com", 
+  "password": "1234"
+}
+
+###
+POST http://localhost:3001/api/auth/login 
+Content-Type: application/json
+
+{
+  "email": "mail@example.com", 
+  "password": "wrong"
+}
+
+
+

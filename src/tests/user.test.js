@@ -47,7 +47,7 @@ describe('Users', () => {
       };
 
       await api
-        .post('/api/users')
+        .post('/api/auth/register')
         .send(newUser)
         .expect(200)
         .expect('Content-Type', /application\/json/);
@@ -66,7 +66,7 @@ describe('Users', () => {
       };
 
       const response = await api
-        .post('/api/login')
+        .post('/api/auth/login')
         .send(toLogin)
         .expect(200)
         .expect('Content-Type', /application\/json/);
@@ -81,7 +81,7 @@ describe('Users', () => {
         password: 'wrong',
       };
 
-      await api.post('/api/login').send(toLogin).expect(401);
+      await api.post('/api/auth/login').send(toLogin).expect(401);
     });
   });
 });

@@ -48,7 +48,7 @@ describe('Tweets', () => {
   describe('creating tweets', () => {
     test('should add a tweet', async () => {
       const response = await api
-        .post('/api/login')
+        .post('/api/auth/login')
         .send({ email: 'test@example.com', password: 'test' });
 
       const token = `Bearer ${response.body.token}`;
