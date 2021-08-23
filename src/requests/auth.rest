@@ -59,5 +59,28 @@ Content-Type: application/json
   "password": "wrong"
 }
 
+###
+POST http://localhost:3001/api/auth/login
+Content-Type: application/json
 
+{
+  "email": "validation@example.com"
+}
+
+###
+POST http://localhost:3001/api/auth/login
+Content-Type: application/json
+
+{
+  "password": "1234"
+}
+
+###
+POST http://localhost:3001/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "@example.com",
+  "password": "1234"
+}
 

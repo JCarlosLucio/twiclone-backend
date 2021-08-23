@@ -97,6 +97,31 @@ describe('Auth', () => {
 
       await api.post('/api/auth/login').send(toLogin).expect(401);
     });
+
+    test('should fail with 400 Bad Request if email is missing', async () => {
+      const toLogin = {
+        password: '1234',
+      };
+
+      await api.post('/api/auth/login').send(toLogin).expect(400);
+    });
+
+    test('should fail with 400 Bad Request if email malformatted', async () => {
+      const toLogin = {
+        email: 'notanEmail',
+        password: '1234',
+      };
+
+      await api.post('/api/auth/login').send(toLogin).expect(400);
+    });
+
+    test('should fail with 400 Bad Request if password missing', async () => {
+      const toLogin = {
+        email: 'test@example.com',
+      };
+
+      await api.post('/api/auth/login').send(toLogin).expect(400);
+    });
   });
 });
 

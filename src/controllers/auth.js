@@ -2,7 +2,7 @@ const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { validate } = require('../middleware');
-const { register } = require('../validations/auth');
+const { login, register } = require('../validations/auth');
 const { JWT_SECRET } = require('../utils/config');
 const User = require('../models/user');
 
@@ -18,7 +18,7 @@ router.post('/register', validate(register), async (req, res) => {
   res.json(savedUser);
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', validate(login), async (req, res) => {
   const body = req.body;
 
   const user = await User.findOne({ email: body.email });

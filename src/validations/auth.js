@@ -7,4 +7,11 @@ const register = yup.object({
   }),
 });
 
-module.exports = { register };
+const login = yup.object({
+  body: yup.object({
+    email: yup.string().email().required(),
+    password: yup.string().required().max(128),
+  }),
+});
+
+module.exports = { login, register };
