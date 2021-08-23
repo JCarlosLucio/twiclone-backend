@@ -36,6 +36,40 @@ describe('Auth', () => {
 
       expect(usersAfter).toHaveLength(2);
     });
+
+    test('should fail with 400 Bad Request if email is missing', async () => {
+      const newUser = {
+        password: '1234',
+      };
+
+      await api.post('/api/auth/register').send(newUser).expect(400);
+    });
+
+    test('should fail with 400 Bad Request if email malformatted', async () => {
+      const newUser = {
+        email: 'notanEmail',
+        password: '1234',
+      };
+
+      await api.post('/api/auth/register').send(newUser).expect(400);
+    });
+
+    test('should fail with 400 Bad Request if password missing', async () => {
+      const newUser = {
+        email: 'test@example.com',
+      };
+
+      await api.post('/api/auth/register').send(newUser).expect(400);
+    });
+
+    test('should fail with 400 Bad Request if password too short', async () => {
+      const newUser = {
+        email: 'test@example.com',
+        password: '1',
+      };
+
+      await api.post('/api/auth/register').send(newUser).expect(400);
+    });
   });
 
   describe('logging in', () => {
