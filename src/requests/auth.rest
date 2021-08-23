@@ -7,6 +7,35 @@ Content-Type: application/json
   "password": "1234"
 }
 
+###
+POST http://localhost:3001/api/auth/register
+Content-Type: application/json
+{
+  "email": "validation@example.com"
+}
+
+###
+POST http://localhost:3001/api/auth/register
+Content-Type: application/json
+{
+  "password": "1234"
+}
+
+###
+POST http://localhost:3001/api/auth/register
+Content-Type: application/json
+{
+  "email": "@example.com",
+  "password": "1234"
+}
+
+###
+POST http://localhost:3001/api/auth/register
+Content-Type: application/json
+{
+  "email": "validation@example.com",
+  "password": "123"
+}
 
 // LOGIN
 POST http://localhost:3001/api/auth/login 

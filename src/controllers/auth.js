@@ -1,19 +1,13 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { validate } = require('../middleware');
+const { register } = require('../validations/auth');
 const { JWT_SECRET } = require('../utils/config');
 const User = require('../models/user');
 
-router.post('/register', async (req, res) => {
+router.post('/register', validate(register), async (req, res) => {
   const { email, password } = req.body;
-
-  if (!password || password.length < 3) {
-    return res.status(401).json({
-      error: !password
-        ? 'password is required'
-        : 'password needs to be at least 3 characters long',
-    });
-  }
 
   const saltRounds = 10;
   const passwordHash = await bcrypt.hash(password, saltRounds);
