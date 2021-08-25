@@ -1,5 +1,6 @@
 const express = require('express');
 require('express-async-errors');
+const cors = require('cors');
 const connectDB = require('./db');
 const authRouter = require('./controllers/auth');
 const usersRouter = require('./controllers/users');
@@ -12,6 +13,7 @@ const app = express();
 connectDB();
 
 /** Middlewares */
+app.use(cors());
 app.use(express.json());
 app.use(middleware.tokenExtractor);
 
