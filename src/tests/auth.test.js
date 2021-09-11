@@ -70,6 +70,20 @@ describe('Auth', () => {
 
       await api.post('/api/auth/register').send(newUser).expect(400);
     });
+
+    test.only('should fail with 400 Bad Request if email not unique', async () => {
+      const newUser = {
+        email: 'test@example.com',
+        password: '1234',
+      };
+
+      const response = await api
+        .post('/api/auth/register')
+        .send(newUser)
+        .expect(400);
+
+      expect(response.body.error).toBe('email must be unique');
+    });
   });
 
   describe('logging in', () => {

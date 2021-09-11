@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
 const userSchema = new mongoose.Schema(
   {
@@ -9,6 +10,10 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+userSchema.plugin(uniqueValidator, {
+  message: '{PATH} must be unique',
+});
 
 userSchema.set('toJSON', {
   transform: (document, returnedObject) => {
