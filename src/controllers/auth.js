@@ -15,7 +15,16 @@ router.post('/register', validate(register), async (req, res) => {
 
   const savedUser = await newUser.save();
 
-  res.json(savedUser);
+  const userForToken = {
+    username: savedUser.username,
+    id: savedUser._id,
+  };
+
+  const token = jwt.sign(userForToken, JWT_SECRET);
+
+  res
+    .status(200)
+    .json({ token, username: savedUser.username, name: savedUser.name });
 });
 
 router.post('/login', validate(login), async (req, res) => {
