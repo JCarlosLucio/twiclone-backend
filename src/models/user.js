@@ -5,14 +5,14 @@ const userSchema = new mongoose.Schema(
   {
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    username: { type: String, default: '' },
+    username: { type: String, required: true, unique: true },
     name: { type: String, default: '' },
   },
   { timestamps: true }
 );
 
 userSchema.plugin(uniqueValidator, {
-  message: '{PATH} must be unique',
+  message: '{PATH} has already been taken.',
 });
 
 userSchema.set('toJSON', {
