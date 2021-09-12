@@ -3,7 +3,8 @@ POST http://localhost:3001/api/auth/register
 Content-Type: application/json
 
 {
-  "email": "mail@example.com",
+  "username": "test",
+  "email": "test@example.com",
   "password": "1234"
 }
 
@@ -12,14 +13,8 @@ POST http://localhost:3001/api/auth/register
 Content-Type: application/json
 
 {
-  "email": "validation@example.com"
-}
-
-###
-POST http://localhost:3001/api/auth/register
-Content-Type: application/json
-
-{
+  "username": "test",
+  "email": "validation@example.com",
   "password": "1234"
 }
 
@@ -28,6 +23,16 @@ POST http://localhost:3001/api/auth/register
 Content-Type: application/json
 
 {
+  "username": "test",
+  "password": "1234"
+}
+
+###
+POST http://localhost:3001/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "test",
   "email": "@example.com",
   "password": "1234"
 }
@@ -37,6 +42,7 @@ POST http://localhost:3001/api/auth/register
 Content-Type: application/json
 
 {
+  "username": "test",
   "email": "validation@example.com",
   "password": "123"
 }
