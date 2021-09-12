@@ -14,7 +14,11 @@ describe('Users', () => {
 
     const saltRounds = 10;
     const password = await bcrypt.hash('test', saltRounds);
-    const user = new User({ email: 'test@example.com', password });
+    const user = new User({
+      username: 'test',
+      email: 'test@example.com',
+      password,
+    });
     await user.save();
     // extended timeout to avoid failing tests for timeout when running beforeEach
   }, 100000);
