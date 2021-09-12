@@ -14,7 +14,11 @@ describe('Auth', () => {
 
     const saltRounds = 10;
     const password = await bcrypt.hash('test', saltRounds);
-    const user = new User({ email: 'test@example.com', password });
+    const user = new User({
+      username: 'test',
+      email: 'test@example.com',
+      password,
+    });
     await user.save();
     // extended timeout to avoid failing tests for timeout when running beforeEach
   }, 100000);
@@ -22,7 +26,8 @@ describe('Auth', () => {
   describe('register', () => {
     test('creation should succed with status 200', async () => {
       const newUser = {
-        email: 'create@example.com',
+        username: 'new_user',
+        email: 'new_user@example.com',
         password: '1234',
       };
 
@@ -37,8 +42,28 @@ describe('Auth', () => {
       expect(usersAfter).toHaveLength(2);
     });
 
+    test('should fail with 400 Bad Request if password missing', async () => {
+      const newUser = {
+        username: 'new_user',
+        email: 'new_user@example.com',
+      };
+
+      await api.post('/api/auth/register').send(newUser).expect(400);
+    });
+
+    test('should fail with 400 Bad Request if password too short', async () => {
+      const newUser = {
+        username: 'new_user',
+        email: 'new_user@example.com',
+        password: '1',
+      };
+
+      await api.post('/api/auth/register').send(newUser).expect(400);
+    });
+
     test('should fail with 400 Bad Request if email is missing', async () => {
       const newUser = {
+        username: 'new_user',
         password: '1234',
       };
 
@@ -47,6 +72,7 @@ describe('Auth', () => {
 
     test('should fail with 400 Bad Request if email malformatted', async () => {
       const newUser = {
+        username: 'new_user',
         email: 'notanEmail',
         password: '1234',
       };
@@ -54,25 +80,9 @@ describe('Auth', () => {
       await api.post('/api/auth/register').send(newUser).expect(400);
     });
 
-    test('should fail with 400 Bad Request if password missing', async () => {
+    test('should fail with 400 Bad Request if email not unique', async () => {
       const newUser = {
-        email: 'test@example.com',
-      };
-
-      await api.post('/api/auth/register').send(newUser).expect(400);
-    });
-
-    test('should fail with 400 Bad Request if password too short', async () => {
-      const newUser = {
-        email: 'test@example.com',
-        password: '1',
-      };
-
-      await api.post('/api/auth/register').send(newUser).expect(400);
-    });
-
-    test.only('should fail with 400 Bad Request if email not unique', async () => {
-      const newUser = {
+        username: 'new_user',
         email: 'test@example.com',
         password: '1234',
       };
@@ -82,12 +92,66 @@ describe('Auth', () => {
         .send(newUser)
         .expect(400);
 
-      expect(response.body.error).toBe('email must be unique');
+      expect(response.body.error).toBe('email has already been taken.');
+    });
+
+    test('should fail with 400 Bad Request if username is missing', async () => {
+      const newUser = {
+        email: 'new_user@example.com',
+        password: '1234',
+      };
+
+      await api.post('/api/auth/register').send(newUser).expect(400);
+    });
+
+    test('should fail with 400 Bad Request if username is too short', async () => {
+      const newUser = {
+        username: 'new',
+        email: 'new_user@example.com',
+        password: '1234',
+      };
+
+      await api.post('/api/auth/register').send(newUser).expect(400);
+    });
+
+    test('should fail with 400 Bad Request if username is too long', async () => {
+      const newUser = {
+        username: '1234567890123456',
+        email: 'new_user@example.com',
+        password: '1234',
+      };
+
+      await api.post('/api/auth/register').send(newUser).expect(400);
+    });
+
+    test.only('should fail with 400 Bad Request if username has forbidden characters', async () => {
+      const newUser = {
+        username: '$asdf@_123*',
+        email: 'new_user@example.com',
+        password: '1234',
+      };
+
+      await api.post('/api/auth/register').send(newUser).expect(400);
+    });
+
+    test('should fail with 400 Bad Request if username not unique', async () => {
+      const newUser = {
+        username: 'test',
+        email: 'new_user@example.com',
+        password: '1234',
+      };
+
+      const response = await api
+        .post('/api/auth/register')
+        .send(newUser)
+        .expect(400);
+
+      expect(response.body.error).toBe('username has already been taken.');
     });
   });
 
   describe('logging in', () => {
-    test('should return token if there is email/password', async () => {
+    test('should return token if there is correct email/password', async () => {
       const toLogin = {
         email: 'test@example.com',
         password: 'test',
