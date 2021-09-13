@@ -6,7 +6,7 @@ const register = yup.object({
     username: yup
       .string()
       .required()
-      .min(4)
+      .min(5)
       .max(15)
       .matches(
         /^[a-zA-Z0-9_]+$/,
