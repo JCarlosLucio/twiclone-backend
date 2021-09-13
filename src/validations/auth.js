@@ -2,6 +2,7 @@ const yup = require('yup');
 
 const register = yup.object({
   body: yup.object({
+    name: yup.string().required(),
     username: yup
       .string()
       .required()
