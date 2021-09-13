@@ -7,11 +7,11 @@ const { JWT_SECRET } = require('../utils/config');
 const User = require('../models/user');
 
 router.post('/register', validate(register), async (req, res) => {
-  const { username, email, password } = req.body;
+  const { name, username, email, password } = req.body;
 
   const saltRounds = 10;
   const passwordHash = await bcrypt.hash(password, saltRounds);
-  const newUser = new User({ username, email, password: passwordHash });
+  const newUser = new User({ name, username, email, password: passwordHash });
 
   const savedUser = await newUser.save();
 
