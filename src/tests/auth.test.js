@@ -15,7 +15,8 @@ describe('Auth', () => {
     const saltRounds = 10;
     const password = await bcrypt.hash('test', saltRounds);
     const user = new User({
-      username: 'test',
+      name: 'Tester',
+      username: 'tester',
       email: 'test@example.com',
       password,
     });
@@ -26,6 +27,7 @@ describe('Auth', () => {
   describe('register', () => {
     test('creation should succed with status 200', async () => {
       const newUser = {
+        name: 'New User',
         username: 'new_user',
         email: 'new_user@example.com',
         password: '1234',
@@ -42,8 +44,9 @@ describe('Auth', () => {
       expect(usersAfter).toHaveLength(2);
     });
 
-    test('should fail with 400 Bad Request if password missing', async () => {
+    test.only('should fail with 400 Bad Request if password missing', async () => {
       const newUser = {
+        name: 'New User',
         username: 'new_user',
         email: 'new_user@example.com',
       };
@@ -53,6 +56,7 @@ describe('Auth', () => {
 
     test('should fail with 400 Bad Request if password too short', async () => {
       const newUser = {
+        name: 'New User',
         username: 'new_user',
         email: 'new_user@example.com',
         password: '1',
@@ -63,6 +67,7 @@ describe('Auth', () => {
 
     test('should fail with 400 Bad Request if email is missing', async () => {
       const newUser = {
+        name: 'New User',
         username: 'new_user',
         password: '1234',
       };
@@ -72,6 +77,7 @@ describe('Auth', () => {
 
     test('should fail with 400 Bad Request if email malformatted', async () => {
       const newUser = {
+        name: 'New User',
         username: 'new_user',
         email: 'notanEmail',
         password: '1234',
@@ -82,6 +88,7 @@ describe('Auth', () => {
 
     test('should fail with 400 Bad Request if email not unique', async () => {
       const newUser = {
+        name: 'New User',
         username: 'new_user',
         email: 'test@example.com',
         password: '1234',
@@ -97,6 +104,7 @@ describe('Auth', () => {
 
     test('should fail with 400 Bad Request if username is missing', async () => {
       const newUser = {
+        name: 'New User',
         email: 'new_user@example.com',
         password: '1234',
       };
@@ -106,6 +114,7 @@ describe('Auth', () => {
 
     test('should fail with 400 Bad Request if username is too short', async () => {
       const newUser = {
+        name: 'New User',
         username: 'new',
         email: 'new_user@example.com',
         password: '1234',
@@ -116,6 +125,7 @@ describe('Auth', () => {
 
     test('should fail with 400 Bad Request if username is too long', async () => {
       const newUser = {
+        name: 'New User',
         username: '1234567890123456',
         email: 'new_user@example.com',
         password: '1234',
@@ -124,8 +134,9 @@ describe('Auth', () => {
       await api.post('/api/auth/register').send(newUser).expect(400);
     });
 
-    test.only('should fail with 400 Bad Request if username has forbidden characters', async () => {
+    test('should fail with 400 Bad Request if username has forbidden characters', async () => {
       const newUser = {
+        name: 'New User',
         username: '$asdf@_123*',
         email: 'new_user@example.com',
         password: '1234',
@@ -136,7 +147,8 @@ describe('Auth', () => {
 
     test('should fail with 400 Bad Request if username not unique', async () => {
       const newUser = {
-        username: 'test',
+        name: 'New User',
+        username: 'tester',
         email: 'new_user@example.com',
         password: '1234',
       };

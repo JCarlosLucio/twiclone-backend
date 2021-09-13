@@ -17,7 +17,8 @@ describe('Tweets', () => {
     const saltRounds = 10;
     const password = await bcrypt.hash('test', saltRounds);
     const user = new User({
-      username: 'test',
+      name: 'Tester',
+      username: 'tester',
       email: 'test@example.com',
       password,
     });
