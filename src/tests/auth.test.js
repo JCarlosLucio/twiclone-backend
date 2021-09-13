@@ -44,7 +44,7 @@ describe('Auth', () => {
       expect(usersAfter).toHaveLength(2);
     });
 
-    test.only('should fail with 400 Bad Request if password missing', async () => {
+    test('should fail with 400 Bad Request if password missing', async () => {
       const newUser = {
         name: 'New User',
         username: 'new_user',
@@ -159,6 +159,16 @@ describe('Auth', () => {
         .expect(400);
 
       expect(response.body.error).toBe('username has already been taken.');
+    });
+
+    test('should fail with 400 Bad Request if name is missing', async () => {
+      const newUser = {
+        username: 'new_user',
+        email: 'new_user@example.com',
+        password: '1234',
+      };
+
+      await api.post('/api/auth/register').send(newUser).expect(400);
     });
   });
 
