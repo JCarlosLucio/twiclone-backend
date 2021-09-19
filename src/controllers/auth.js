@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { validate } = require('../middleware');
+const { userExtractor, validate } = require('../middleware');
 const { login, register } = require('../validations/auth');
 const { JWT_SECRET } = require('../utils/config');
 const User = require('../models/user');
@@ -22,9 +22,7 @@ router.post('/register', validate(register), async (req, res) => {
 
   const token = jwt.sign(userForToken, JWT_SECRET);
 
-  res
-    .status(200)
-    .json({ token, username: savedUser.username, name: savedUser.name });
+  res.status(200).json({ token, ...savedUser.toJSON() });
 });
 
 router.post('/login', validate(login), async (req, res) => {
@@ -47,7 +45,14 @@ router.post('/login', validate(login), async (req, res) => {
 
   const token = jwt.sign(userForToken, JWT_SECRET);
 
-  res.status(200).json({ token, username: user.username, name: user.name });
+  res.status(200).json({ token, ...user.toJSON() });
+});
+
+router.get('/me', userExtractor, async (req, res) => {
+  // req.user/req.token come from tokenExtractor/userExtractor middlewares
+  const user = req.user.toJSON();
+  const userWithToken = { token: req.token, ...user };
+  res.json(userWithToken);
 });
 
 module.exports = router;
