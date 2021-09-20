@@ -15,6 +15,7 @@ router.get('/', async (req, res) => {
   }
 
   const tweets = await Tweet.find({})
+    .sort({ _id: -1 })
     .skip((currentPage - 1) * perPage)
     .limit(perPage)
     .populate('user', {
