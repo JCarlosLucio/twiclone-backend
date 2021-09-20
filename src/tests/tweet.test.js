@@ -43,7 +43,7 @@ describe('Tweets', () => {
 
     test('should return tweets with user without password', async () => {
       const response = await api.get('/api/tweets');
-      const userProps = response.body.flatMap((tweet) =>
+      const userProps = response.body.tweets.flatMap((tweet) =>
         Object.keys(tweet.user)
       );
       expect(userProps).not.toContain('password');
