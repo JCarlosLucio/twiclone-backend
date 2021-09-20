@@ -36,9 +36,40 @@ describe('Tweets', () => {
         .expect('Content-Type', /application\/json/);
     });
 
-    test('should return all tweets', async () => {
+    test('should return default page and default limit of tweets', async () => {
+      const defaultTweetsLimit = 10;
+      const defaultPage = 1;
       const response = await api.get('/api/tweets');
-      expect(response.body).toHaveLength(initialTweets.length);
+      expect(response.body.tweets).toHaveLength(defaultTweetsLimit);
+      expect(response.body.currentPage).toBe(defaultPage);
+    });
+
+    test('should return totalItems/currentPage/tweets/lastPage according to page/limit', async () => {
+      const page = 2;
+      const limit = 2;
+      const response = await api.get(`/api/tweets?page=${page}&limit=${limit}`);
+
+      expect(response.body.totalItems).toBe(initialTweets.length);
+      expect(response.body.tweets).toHaveLength(limit);
+      expect(response.body.currentPage).toBe(page);
+
+      const expectedLastPage = Math.ceil(initialTweets.length / limit);
+      expect(response.body.lastPage).toBe(expectedLastPage);
+
+      const contents = response.body.tweets.map((tweet) => tweet.content);
+      const tweet1 = initialTweets[7].content;
+      const tweet2 = initialTweets[8].content;
+      expect(contents).toContain(tweet1);
+      expect(contents).toContain(tweet2);
+    });
+
+    test('should fail with 404 Not Found if page not found', async () => {
+      const page = 3;
+      const limit = 11;
+      const response = await api
+        .get(`/api/tweets?page=${page}&limit=${limit}`)
+        .expect(404);
+      expect(response.body.error).toBe('Page not found.');
     });
 
     test('should return tweets with user without password', async () => {
