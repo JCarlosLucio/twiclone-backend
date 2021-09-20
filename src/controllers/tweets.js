@@ -5,7 +5,7 @@ const Tweet = require('../models/tweet');
 
 router.get('/', async (req, res) => {
   const currentPage = Number(req.query.page) || 1;
-  const perPage = 10;
+  const perPage = Number(req.query.limit) || 10;
 
   const totalItems = await Tweet.countDocuments({});
   const lastPage = Math.ceil(totalItems / perPage);
