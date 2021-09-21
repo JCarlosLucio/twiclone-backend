@@ -26,6 +26,7 @@
   "homepage": "https://github.com/JCarlosLucio/twiclone-backend#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "cloudinary": "^1.27.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
