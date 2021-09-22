@@ -82,7 +82,7 @@ describe('Tweets', () => {
   });
 
   describe('creating tweets', () => {
-    test('should add a tweet', async () => {
+    test('should add a tweet without images', async () => {
       const response = await api
         .post('/api/auth/login')
         .send({ email: 'test@example.com', password: 'test' });
@@ -96,9 +96,8 @@ describe('Tweets', () => {
       await api
         .post('/api/tweets')
         .set('Authorization', token)
-        .send(newTweet)
-        .expect(201)
-        .expect('Content-Type', /application\/json/);
+        .field('content', newTweet.content)
+        .expect(201);
 
       const tweetsAfter = await tweetsInDb();
       const contents = tweetsAfter.map((tweet) => tweet.content);
@@ -114,11 +113,11 @@ describe('Tweets', () => {
 
       const token = `Bearer ${response.body.token}`;
 
-      await api
+      const tweetResponse = await api
         .post('/api/tweets')
         .set('Authorization', token)
-        .send({})
         .expect(400);
+      expect(tweetResponse.body.error).toBe('body.content is a required field');
     });
 
     test('should fail with 400 Bad Request if content is too long', async () => {
@@ -133,11 +132,15 @@ describe('Tweets', () => {
           'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Unde voluptatum voluptate velit mollitia harum nulla eum sint, iusto veritatis optio. Dolorem at enim perferendis dolorum totam nesciunt, aut quisquam quibusdam vero, non iure recusandae magni quam suscipit illum optio quidem, rerum sapiente!',
       };
 
-      await api
+      const tweetResponse = await api
         .post('/api/tweets')
         .set('Authorization', token)
-        .send(newTweet)
+        .field('content', newTweet.content)
         .expect(400);
+
+      expect(tweetResponse.body.error).toBe(
+        'body.content must be at most 280 characters'
+      );
     });
   });
 });
