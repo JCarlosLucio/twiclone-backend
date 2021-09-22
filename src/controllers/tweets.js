@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const { userExtractor, validate } = require('../middleware');
+const cloudinary = require('../utils/cloudinary');
+const upload = require('../utils/multer');
 const { createTweet } = require('../validations/tweets');
 const Tweet = require('../models/tweet');
 
@@ -26,15 +28,42 @@ router.get('/', async (req, res) => {
   res.status(200).json({ tweets, totalItems, currentPage, lastPage });
 });
 
-router.post('/', userExtractor, validate(createTweet), async (req, res) => {
-  const user = req.user; // comes from userExtractor middleware
-  const { content } = req.body;
+/**
+ * multer(upload) middleware parses body and files(images) from
+ * Content-Type': multipart/form-data which is needed for uploading images.
+ * Since multer parses body and files, validation has to be after
+ * multer middleware.
+ */
 
-  const newTweet = new Tweet({ content, user });
+router.post(
+  '/',
+  userExtractor,
+  upload.array('images', 4),
+  validate(createTweet),
+  async (req, res) => {
+    const user = req.user; // comes from userExtractor middleware
+    const { content } = req.body; // parsed by multer
+    const imageFiles = req.files; // also parsed by multer
 
-  const savedTweet = await newTweet.save();
+    const imageFilesPromises = imageFiles.map((image) => {
+      return cloudinary.uploader.upload(image.path, {
+        folder: 'twiclone',
+        allowed_formats: ['png', 'jpg', 'jpeg', 'gif'],
+      });
+    });
 
-  res.status(201).json(savedTweet);
-});
+    const imagesResponse = await Promise.all(imageFilesPromises);
+
+    const images = imagesResponse.map((image) => {
+      return { url: image.secure_url, filename: image.public_id };
+    });
+
+    const newTweet = new Tweet({ content, user, images });
+
+    const savedTweet = await newTweet.save();
+
+    res.status(201).json(savedTweet);
+  }
+);
 
 module.exports = router;
