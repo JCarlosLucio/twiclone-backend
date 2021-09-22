@@ -6,15 +6,19 @@ const fileFilter = (_req, file, cb) => {
   if (
     file.mimetype === 'image/png' ||
     file.mimetype === 'image/jpg' ||
-    file.mimetype === 'image/jpeg'
+    file.mimetype === 'image/jpeg' ||
+    file.mimetype === 'image/gif'
   ) {
     cb(null, true);
   } else {
-    cb(new Error('Only .png, .jpg, and .jpeg format allowed'), false);
+    const error = new Error('Only .png, .jpg, .jpeg, and .gif formats allowed');
+    error.name = 'MulterError';
+
+    cb(error, false);
   }
 };
 
-const maxSize = 2 * 1024 * 1024; // 2MB
+const maxSize = 3 * 1024 * 1024; // 3MB
 
 module.exports = multer({
   storage,
