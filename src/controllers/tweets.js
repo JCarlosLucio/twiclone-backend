@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
   const perPage = Number(req.query.limit) || 10;
 
   const totalItems = await Tweet.countDocuments({});
-  const lastPage = Math.ceil(totalItems / perPage);
+  const lastPage = Math.ceil(totalItems / perPage) || 1;
 
   if (currentPage > lastPage || currentPage <= 0) {
     return res.status(404).json({ error: 'Page not found.' });
