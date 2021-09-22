@@ -5,6 +5,7 @@ const User = require('../models/user');
 
 const errorHandler = (error, _req, res, next) => {
   logger.error(error);
+  // console.log('From middleware>> ', JSON.stringify(error));
   if (error.name === 'CastError') {
     return res.status(400).send({ error: 'malformatted id' });
   } else if (error.name === 'ValidationError') {
@@ -19,6 +20,8 @@ const errorHandler = (error, _req, res, next) => {
     return res.status(401).json({ error: 'invalid token' });
   } else if (error.name === 'TokenExpiredError') {
     return res.status(401).json({ error: 'token expired' });
+  } else if (error.name === 'MulterError') {
+    return res.status(400).json({ error: error.message });
   }
 
   next(error);
