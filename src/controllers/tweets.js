@@ -43,20 +43,24 @@ router.post(
   async (req, res) => {
     const user = req.user; // comes from userExtractor middleware
     const { content } = req.body; // parsed by multer
-    const imageFiles = req.files; // also parsed by multer
+    const files = req.files; // also parsed by multer
 
-    const imageFilesPromises = imageFiles.map((image) => {
-      return cloudinary.uploader.upload(image.path, {
-        folder: 'twiclone',
-        allowed_formats: ['png', 'jpg', 'jpeg', 'gif'],
+    let images = [];
+
+    if (files) {
+      const imageFilesPromises = files.map((image) => {
+        return cloudinary.uploader.upload(image.path, {
+          folder: 'twiclone',
+          allowed_formats: ['png', 'jpg', 'jpeg', 'gif'],
+        });
       });
-    });
 
-    const imagesResponse = await Promise.all(imageFilesPromises);
+      const imagesResponse = await Promise.all(imageFilesPromises);
 
-    const images = imagesResponse.map((image) => {
-      return { url: image.secure_url, filename: image.public_id };
-    });
+      images = imagesResponse.map((image) => {
+        return { url: image.secure_url, filename: image.public_id };
+      });
+    }
 
     const newTweet = new Tweet({ content, user, images });
 
