@@ -1,11 +1,13 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const { Buffer } = require('buffer');
 const supertest = require('supertest');
 
 const app = require('../app');
 const { initialTweets, tweetsInDb } = require('./test_helper');
 const Tweet = require('../models/tweet');
 const User = require('../models/user');
+const { cloudinaryDeleteTest } = require('../utils/cloudinary');
 
 const api = supertest(app);
 
@@ -106,6 +108,77 @@ describe('Tweets', () => {
       expect(contents).toContain(newTweet.content);
     });
 
+    test('should add a tweet with image', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const content = 'Creating a tweet with image from a test';
+      const file = `${__dirname}/testFiles/test.jpg`;
+
+      const tweetResponse = await api
+        .post('/api/tweets')
+        .set('Authorization', token)
+        .field('content', content)
+        .attach('images', file)
+        .expect(201);
+
+      const tweetsAfter = await tweetsInDb();
+      const contents = tweetsAfter.map((tweet) => tweet.content);
+
+      expect(tweetsAfter).toHaveLength(initialTweets.length + 1);
+      expect(contents).toContain(content);
+      expect(tweetResponse.body.images).toHaveLength(1);
+    });
+
+    test('should fail with 400 Bad Request if image too large', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const content = 'A tweet with a file too large';
+
+      // A buffer is used to mock the image
+      const largeBuffer = Buffer.from('a'.repeat(4 * 1024 * 1024)); // 4MB
+
+      const tweetResponse = await api
+        .post('/api/tweets')
+        .set('Authorization', token)
+        .field('content', content)
+        .attach('images', largeBuffer, 'test.png')
+        .expect(400);
+
+      expect(tweetResponse.body.error).toBe('File too large');
+    });
+
+    test('should fail with 400 Bad Request if type not jpg/jped/png/gif', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const content = 'A tweet with a file too large';
+
+      // A buffer is used to mock the image
+      const buffer = Buffer.from('a'.repeat(100));
+
+      const tweetResponse = await api
+        .post('/api/tweets')
+        .set('Authorization', token)
+        .field('content', content)
+        .attach('images', buffer, 'test.txt')
+        .expect(400);
+
+      expect(tweetResponse.body.error).toBe(
+        'Only .png, .jpg, .jpeg, and .gif formats allowed'
+      );
+    });
+
     test('should fail with 400 Bad Request if content is missing', async () => {
       const response = await api
         .post('/api/auth/login')
@@ -146,6 +219,7 @@ describe('Tweets', () => {
 });
 
 afterAll(() => {
+  cloudinaryDeleteTest();
   mongoose.connection.close();
   // extended timeout to avoid "Jest did not exit one second after the test run has completed" warning (although it still may show warning sometimes)
 }, 100000);
