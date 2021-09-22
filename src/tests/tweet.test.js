@@ -179,6 +179,32 @@ describe('Tweets', () => {
       );
     });
 
+    test('should fail with 400 Bad Request if more than 4 images', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const content = 'A tweet with a file too large';
+
+      // A buffer is used to mock the image
+      const buffer = Buffer.from('a'.repeat(10));
+
+      const tweetResponse = await api
+        .post('/api/tweets')
+        .set('Authorization', token)
+        .field('content', content)
+        .attach('images', buffer, 'test1.jpeg')
+        .attach('images', buffer, 'test2.jpg')
+        .attach('images', buffer, 'test3.png')
+        .attach('images', buffer, 'test4.gif')
+        .attach('images', buffer, 'test5.jpg')
+        .expect(400);
+
+      expect(tweetResponse.body.error).toBe('Unexpected field');
+    });
+
     test('should fail with 400 Bad Request if content is missing', async () => {
       const response = await api
         .post('/api/auth/login')
