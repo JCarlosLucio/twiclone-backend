@@ -7,4 +7,14 @@ cloudinary.config({
   secure: true,
 });
 
-module.exports = cloudinary;
+const productFolder = 'twiclone';
+const testFolder = 'twiclone/test';
+const folder = process.env.NODE_ENV !== 'test' ? productFolder : testFolder;
+
+const cloudinaryUpload = (path) =>
+  cloudinary.uploader.upload(path, {
+    folder,
+    allowed_formats: ['png', 'jpg', 'jpeg', 'gif'],
+  });
+
+module.exports = cloudinaryUpload;
