@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { userExtractor, validate } = require('../middleware');
-const cloudinary = require('../utils/cloudinary');
+const { cloudinaryUpload } = require('../utils/cloudinary');
 const upload = require('../utils/multer');
 const { createTweet } = require('../validations/tweets');
 const Tweet = require('../models/tweet');
@@ -49,10 +49,7 @@ router.post(
 
     if (files) {
       const imageFilesPromises = files.map((image) => {
-        return cloudinary.uploader.upload(image.path, {
-          folder: 'twiclone',
-          allowed_formats: ['png', 'jpg', 'jpeg', 'gif'],
-        });
+        return cloudinaryUpload(image.path);
       });
 
       const imagesResponse = await Promise.all(imageFilesPromises);
