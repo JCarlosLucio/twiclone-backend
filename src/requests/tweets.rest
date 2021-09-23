@@ -1,0 +1,17 @@
+// Create tweets
+POST http://localhost:3001/api/tweets
+Content-Type: application/json
+Authorization: bearer <TOKEN>
+
+{
+  "content": "first tweet from backend"
+}
+
+###
+// Like tweets
+PUT http://localhost:3001/api/tweets/:id/like
+Content-Type: application/json
+Authorization: bearer <TOKEN>
+
+{
+}

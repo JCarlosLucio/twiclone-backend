@@ -1,7 +1,0 @@
-POST http://localhost:3001/api/tweets
-Content-Type: application/json
-Authorization: bearer <TOKEN>
-
-{
-  "content": "first tweet from backend"
-}
