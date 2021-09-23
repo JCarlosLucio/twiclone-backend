@@ -242,6 +242,87 @@ describe('Tweets', () => {
       );
     });
   });
+
+  describe('liking tweets', () => {
+    test("should like a tweet if user hasn't liked it", async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const tweetsAtStart = await tweetsInDb();
+      const tweetToLike = tweetsAtStart[0];
+
+      await api
+        .put(`/api/tweets/${tweetToLike.id}/like`)
+        .set('Authorization', token)
+        .expect(200);
+
+      const tweetsAtEnd = await tweetsInDb();
+      expect(tweetsAtEnd[0].likes).toHaveLength(tweetToLike.likes.length + 1);
+      expect(tweetsAtEnd[0].likes[0].toString()).toBe(response.body.id);
+    });
+
+    test('should unlike a tweet if user has liked it', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const tweetsAtStart = await tweetsInDb();
+      const tweetToLike = tweetsAtStart[0];
+
+      await api
+        .put(`/api/tweets/${tweetToLike.id}/like`)
+        .set('Authorization', token)
+        .expect(200);
+
+      const tweetsAfterLike = await tweetsInDb();
+      expect(tweetsAfterLike[0].likes).toHaveLength(
+        tweetToLike.likes.length + 1
+      );
+
+      await api
+        .put(`/api/tweets/${tweetToLike.id}/like`)
+        .set('Authorization', token)
+        .expect(200);
+
+      const tweetsAtEnd = await tweetsInDb();
+      expect(tweetsAtEnd[0].likes).toHaveLength(0);
+    });
+
+    test('should fail with 400 Bad Request if tweet id is invalid', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const tweetResponse = await api
+        .put('/api/tweets/notavalidid/like')
+        .set('Authorization', token)
+        .expect(400);
+
+      expect(tweetResponse.body.error).toBe('malformatted id');
+    });
+
+    test('should fail with 404 Not Found if tweet id is wrong', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const tweetResponse = await api
+        .put('/api/tweets/123bf5e123ca762cb12e123d/like')
+        .set('Authorization', token)
+        .expect(404);
+
+      expect(tweetResponse.body.error).toBe('Tweet not found.');
+    });
+  });
 });
 
 afterAll(() => {
