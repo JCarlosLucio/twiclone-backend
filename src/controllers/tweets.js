@@ -67,4 +67,30 @@ router.post(
   }
 );
 
+router.put('/:id/like', userExtractor, async (req, res) => {
+  const id = req.params.id;
+  const user = req.user; // comes from userExtractor middleware
+
+  const tweet = await Tweet.findById(id);
+
+  if (!tweet) {
+    return res.status(404).json({ error: 'Tweet not found.' });
+  }
+
+  const isLiked = tweet.likes.includes(user._id);
+
+  // if user._id exist in tweet likes
+  if (isLiked) {
+    // Remove user from tweet likes
+    tweet.likes.pull(user._id);
+  } else {
+    // Add user to tweet likes
+    tweet.likes.push(user._id);
+  }
+
+  const updatedTweet = await tweet.save();
+
+  res.status(200).json(updatedTweet);
+});
+
 module.exports = router;
