@@ -14,6 +14,12 @@ const tweetSchema = new mongoose.Schema(
         filename: String,
       },
     ],
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   { timestamps: true }
 );
