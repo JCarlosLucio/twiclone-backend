@@ -42,11 +42,11 @@ router.post(
   validate(createTweet),
   async (req, res) => {
     const user = req.user; // comes from userExtractor middleware
-    const { content } = req.body; // parsed by multer
+    const { content, parent } = req.body; // parsed by multer
     const files = req.files; // also parsed by multer
 
+    // handle images upload to cloudinary
     let images = [];
-
     if (files) {
       const imageFilesPromises = files.map((image) => {
         return cloudinaryUpload(image.path);
@@ -59,9 +59,17 @@ router.post(
       });
     }
 
-    const newTweet = new Tweet({ content, user, images });
+    const newTweet = new Tweet({ content, user, images, parent });
 
     const savedTweet = await newTweet.save();
+
+    // if tweet is reply(has parent) then saves tweet to parent.replies
+    if (parent) {
+      const parentTweet = await Tweet.findById(parent);
+
+      parentTweet.replies.push(parent);
+      await parentTweet.save();
+    }
 
     res.status(201).json(savedTweet);
   }
