@@ -71,7 +71,10 @@ router.put('/:id/like', userExtractor, async (req, res) => {
   const id = req.params.id;
   const user = req.user; // comes from userExtractor middleware
 
-  const tweet = await Tweet.findById(id);
+  const tweet = await Tweet.findById(id).populate('user', {
+    username: 1,
+    name: 1,
+  });
 
   if (!tweet) {
     return res.status(404).json({ error: 'Tweet not found.' });
