@@ -3,6 +3,11 @@ const mongoose = require('mongoose');
 const tweetSchema = new mongoose.Schema(
   {
     content: { type: String, required: true, maxLength: 280 },
+    parent: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Tweet',
+      default: null,
+    },
     user: {
       required: true,
       type: mongoose.Schema.Types.ObjectId,
@@ -18,6 +23,12 @@ const tweetSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+      },
+    ],
+    replies: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Tweet',
       },
     ],
   },
