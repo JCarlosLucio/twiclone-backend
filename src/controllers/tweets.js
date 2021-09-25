@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const { isValidObjectId } = require('mongoose');
 const { userExtractor, validate } = require('../middleware');
 const { cloudinaryUpload } = require('../utils/cloudinary');
 const upload = require('../utils/multer');
@@ -45,10 +44,6 @@ router.post(
     const user = req.user; // comes from userExtractor middleware
     const { content, parent } = req.body; // parsed by multer
     const files = req.files; // also parsed by multer
-
-    if (parent && !isValidObjectId(parent)) {
-      return res.status(400).json({ error: 'malformatted id' });
-    }
 
     // handle images upload to cloudinary
     let images = [];
