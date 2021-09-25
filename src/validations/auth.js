@@ -1,4 +1,5 @@
 const yup = require('yup');
+const User = require('../models/user');
 
 const register = yup.object({
   body: yup.object({
@@ -11,8 +12,23 @@ const register = yup.object({
       .matches(
         /^[a-zA-Z0-9_]+$/,
         'username must contain only letters, numbers, underscores and no spaces'
+      )
+      .test(
+        'uniqueUsername',
+        'username has already been taken.',
+        async (value) => {
+          const user = await User.findOne({ username: value });
+          return !user;
+        }
       ),
-    email: yup.string().email().required(),
+    email: yup
+      .string()
+      .email()
+      .required()
+      .test('uniqueEmail', 'email has already been taken.', async (value) => {
+        const user = await User.findOne({ email: value });
+        return !user;
+      }),
     password: yup.string().required().min(4).max(128),
   }),
 });
