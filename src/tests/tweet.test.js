@@ -84,7 +84,7 @@ describe('Tweets', () => {
   });
 
   describe('creating tweets', () => {
-    test('should add a tweet without images', async () => {
+    test('should add a tweet without images and parent', async () => {
       const response = await api
         .post('/api/auth/login')
         .send({ email: 'test@example.com', password: 'test' });
@@ -108,7 +108,7 @@ describe('Tweets', () => {
       expect(contents).toContain(newTweet.content);
     });
 
-    test('should add a tweet with image', async () => {
+    test('should add a tweet with image and no parent', async () => {
       const response = await api
         .post('/api/auth/login')
         .send({ email: 'test@example.com', password: 'test' });
@@ -131,6 +131,41 @@ describe('Tweets', () => {
       expect(tweetsAfter).toHaveLength(initialTweets.length + 1);
       expect(contents).toContain(content);
       expect(tweetResponse.body.images).toHaveLength(1);
+    });
+
+    test.only('should add a tweet with parent and add tweet as reply to parent', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const tweetsAtStart = await tweetsInDb();
+      const parentTweetStart = tweetsAtStart[0];
+
+      const newTweet = {
+        content: 'Creating a tweet from a test',
+        parent: parentTweetStart.id,
+      };
+
+      const tweetResponse = await api
+        .post('/api/tweets')
+        .set('Authorization', token)
+        .field('content', newTweet.content)
+        .field('parent', newTweet.parent)
+        .expect(201);
+
+      const tweetsAtEnd = await tweetsInDb();
+      const parentTweetAtEnd = tweetsAtEnd[0];
+      const contents = tweetsAtEnd.map((tweet) => tweet.content);
+
+      expect(tweetsAtEnd).toHaveLength(initialTweets.length + 1);
+      expect(contents).toContain(newTweet.content);
+      expect(tweetResponse.body.parent).toBe(newTweet.parent);
+      expect(parentTweetAtEnd.replies).toHaveLength(1);
+      expect(parentTweetAtEnd.replies[0].toString()).toBe(
+        tweetResponse.body.id
+      );
     });
 
     test('should fail with 400 Bad Request if image too large', async () => {
