@@ -67,7 +67,7 @@ router.post(
     if (parent) {
       const parentTweet = await Tweet.findById(parent);
 
-      parentTweet.replies.push(parent);
+      parentTweet.replies.push(savedTweet._id);
       await parentTweet.save();
     }
 
