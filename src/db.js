@@ -4,12 +4,8 @@ const logger = require('./utils/logger');
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useFindAndModify: false,
-      useCreateIndex: true,
-    });
+    // Mongoose 6 always behaves as if useNewUrlParser, useUnifiedTopology, and useCreateIndex are true, and useFindAndModify is false
+    await mongoose.connect(MONGODB_URI);
     logger.info('connected to mongoDB');
   } catch (error) {
     logger.error('error connecting to mongoDB', error);
