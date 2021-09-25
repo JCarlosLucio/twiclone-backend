@@ -43,6 +43,34 @@ describe('Users', () => {
       expect(properties).not.toContain('password');
     });
   });
+
+  describe('getting user by username', () => {
+    test('should return user', async () => {
+      const username = 'tester';
+
+      const userResponse = await api.get(`/api/users/${username}`).expect(200);
+
+      const properties = Object.keys(userResponse.body);
+
+      expect(properties).not.toContain('password');
+      expect(properties).not.toContain('token');
+
+      expect(properties).toContain('name');
+      expect(properties).toContain('username');
+      expect(properties).toContain('email');
+      expect(properties).toContain('createdAt');
+      expect(properties).toContain('updatedAt');
+      expect(properties).toContain('id');
+    });
+
+    test('should fail with 404 Not Found when user not found', async () => {
+      const username = 'thisusernamedoesntexist';
+
+      const userResponse = await api.get(`/api/users/${username}`).expect(404);
+
+      expect(userResponse.body.error).toBe('User not found.');
+    });
+  });
 });
 
 afterAll(() => {
