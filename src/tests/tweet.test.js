@@ -133,7 +133,7 @@ describe('Tweets', () => {
       expect(tweetResponse.body.images).toHaveLength(1);
     });
 
-    test.only('should add a tweet with parent and add tweet as reply to parent', async () => {
+    test('should add a tweet with parent and add tweet as reply to parent', async () => {
       const response = await api
         .post('/api/auth/login')
         .send({ email: 'test@example.com', password: 'test' });
@@ -275,6 +275,28 @@ describe('Tweets', () => {
       expect(tweetResponse.body.error).toBe(
         'body.content must be at most 280 characters'
       );
+    });
+
+    test('should fail with 400 Bad Request if parent id is invalid', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const newTweet = {
+        content: 'Creating a tweet from a test',
+        parent: 'notavalidid',
+      };
+
+      const tweetResponse = await api
+        .post('/api/tweets/')
+        .set('Authorization', token)
+        .field('content', newTweet.content)
+        .field('parent', newTweet.parent)
+        .expect(400);
+
+      expect(tweetResponse.body.error).toBe('malformatted id');
     });
   });
 
