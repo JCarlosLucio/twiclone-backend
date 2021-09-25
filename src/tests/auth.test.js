@@ -223,6 +223,49 @@ describe('Auth', () => {
       await api.post('/api/auth/login').send(toLogin).expect(400);
     });
   });
+
+  describe('me', () => {
+    test('should return me(user) with token', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const meResponse = await api
+        .get('/api/auth/me')
+        .set('Authorization', token)
+        .expect(200);
+
+      const properties = Object.keys(meResponse.body);
+
+      expect(properties).not.toContain('password');
+      expect(properties).toContain('token');
+      expect(properties).toContain('name');
+      expect(properties).toContain('username');
+      expect(properties).toContain('email');
+      expect(properties).toContain('createdAt');
+      expect(properties).toContain('updatedAt');
+      expect(properties).toContain('id');
+    });
+
+    test('should fail with 401 Unauthorized if invalid token', async () => {
+      const token = 'Bearer invalidtoken';
+
+      const meResponse = await api
+        .get('/api/auth/me')
+        .set('Authorization', token)
+        .expect(401);
+
+      expect(meResponse.body.error).toBe('invalid token');
+    });
+
+    test('should fail with 401 Unauthorized if no token', async () => {
+      const meResponse = await api.get('/api/auth/me').expect(401);
+
+      expect(meResponse.body.error).toBe('invalid token');
+    });
+  });
 });
 
 afterAll(() => {
