@@ -2,7 +2,7 @@ const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { userExtractor, validate } = require('../middleware');
-const { login, register } = require('../validations/auth');
+const { login, register, updateMe } = require('../validations/auth');
 const { JWT_SECRET } = require('../utils/config');
 const User = require('../models/user');
 
@@ -53,6 +53,19 @@ router.get('/me', userExtractor, async (req, res) => {
   const user = req.user.toJSON();
   const userWithToken = { token: req.token, ...user };
   res.json(userWithToken);
+});
+
+router.put('/me', userExtractor, validate(updateMe), async (req, res) => {
+  const user = req.user;
+  const { name, bio = '', location = '' } = req.body;
+
+  user.name = name;
+  user.bio = bio;
+  user.location = location;
+
+  const updatedUser = await user.save();
+
+  res.status(200).json({ token: req.token, ...updatedUser.toJSON() });
 });
 
 module.exports = router;
