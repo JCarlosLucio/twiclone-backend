@@ -224,7 +224,7 @@ describe('Auth', () => {
     });
   });
 
-  describe('me', () => {
+  describe('getting me', () => {
     test('should return me(user) with token', async () => {
       const response = await api
         .post('/api/auth/login')
@@ -264,6 +264,79 @@ describe('Auth', () => {
       const meResponse = await api.get('/api/auth/me').expect(401);
 
       expect(meResponse.body.error).toBe('invalid token');
+    });
+  });
+
+  describe('updating me', () => {
+    test('should update me', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const updatedMe = {
+        name: 'UPDATED NAME',
+        bio: 'this an updated bio',
+        location: 'Updated Town',
+      };
+
+      const meResponse = await api
+        .put('/api/auth/me')
+        .set('Authorization', token)
+        .send(updatedMe)
+        .expect(200);
+
+      expect(meResponse.body.name).not.toBe(response.body.name);
+      expect(meResponse.body.name).toBe(updatedMe.name);
+      expect(meResponse.body.bio).not.toBe(response.body.bio);
+      expect(meResponse.body.bio).toBe(updatedMe.bio);
+      expect(meResponse.body.location).not.toBe(response.body.location);
+      expect(meResponse.body.location).toBe(updatedMe.location);
+    });
+
+    test('should update me without bio/location', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const updatedMe = {
+        name: 'UPDATED NAME',
+      };
+
+      const meResponse = await api
+        .put('/api/auth/me')
+        .set('Authorization', token)
+        .send(updatedMe)
+        .expect(200);
+
+      expect(meResponse.body.name).not.toBe(response.body.name);
+      expect(meResponse.body.name).toBe(updatedMe.name);
+      expect(meResponse.body.bio).toBe('');
+      expect(meResponse.body.location).toBe('');
+    });
+
+    test('should fail with 400 Bad Request if name is missing', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const updatedMe = {
+        bio: 'this is no name',
+        location: 'Updated Town',
+      };
+
+      const meResponse = await api
+        .put('/api/auth/me')
+        .set('Authorization', token)
+        .send(updatedMe)
+        .expect(400);
+
+      expect(meResponse.body.error).toBe('body.name is a required field');
     });
   });
 });
