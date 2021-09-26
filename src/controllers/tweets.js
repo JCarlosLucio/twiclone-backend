@@ -23,6 +23,8 @@ router.get('/', async (req, res) => {
     .populate('user', {
       username: 1,
       name: 1,
+      bio: 1,
+      avatar: 1,
     });
 
   res.status(200).json({ tweets, totalItems, currentPage, lastPage });
@@ -82,6 +84,8 @@ router.put('/:id/like', userExtractor, async (req, res) => {
   const tweet = await Tweet.findById(id).populate('user', {
     username: 1,
     name: 1,
+    avatar: 1,
+    bio: 1,
   });
 
   if (!tweet) {
