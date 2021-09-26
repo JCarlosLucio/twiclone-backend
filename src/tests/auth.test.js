@@ -244,6 +244,10 @@ describe('Auth', () => {
       expect(properties).toContain('name');
       expect(properties).toContain('username');
       expect(properties).toContain('email');
+      expect(properties).toContain('bio');
+      expect(properties).toContain('location');
+      expect(properties).toContain('avatar');
+      expect(properties).toContain('banner');
       expect(properties).toContain('createdAt');
       expect(properties).toContain('updatedAt');
       expect(properties).toContain('id');
