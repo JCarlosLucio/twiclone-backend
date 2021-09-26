@@ -32,6 +32,23 @@ const userSchema = new mongoose.Schema(
       maxLength: 30,
       default: '',
     },
+    avatar: {
+      url: { type: String },
+      filename: {
+        type: String,
+        default: null,
+      },
+    },
+    banner: {
+      url: {
+        type: String,
+        default: null,
+      },
+      filename: {
+        type: String,
+        default: null,
+      },
+    },
   },
   { timestamps: true }
 );
