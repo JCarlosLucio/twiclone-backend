@@ -3,7 +3,7 @@ const User = require('../models/user');
 
 const register = yup.object({
   body: yup.object({
-    name: yup.string().required(),
+    name: yup.string().required().max(50),
     username: yup
       .string()
       .required()
@@ -40,4 +40,12 @@ const login = yup.object({
   }),
 });
 
-module.exports = { login, register };
+const updateMe = yup.object({
+  body: yup.object({
+    name: yup.string().required().max(50),
+    bio: yup.string().max(160),
+    location: yup.string().max(30),
+  }),
+});
+
+module.exports = { login, register, updateMe };
