@@ -3,9 +3,10 @@ const { isValidObjectId } = require('mongoose');
 
 const createTweet = yup.object({
   body: yup.object({
-    content: yup.string().required().max(280),
+    content: yup.string().trim().required().max(280),
     parent: yup
       .string()
+      .trim()
       .nullable()
       .test('isValidObjectId', 'malformatted id', (value) =>
         isValidObjectId(value)

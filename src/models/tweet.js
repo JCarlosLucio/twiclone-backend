@@ -2,7 +2,12 @@ const mongoose = require('mongoose');
 
 const tweetSchema = new mongoose.Schema(
   {
-    content: { type: String, required: true, maxLength: 280 },
+    content: {
+      type: String,
+      trim: true,
+      required: true,
+      maxLength: 280,
+    },
     parent: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Tweet',
