@@ -91,3 +91,40 @@ Content-Type: application/json
   "password": "1234"
 }
 
+// GET ME
+### 
+GET http://localhost:3001/api/auth/me
+Content-Type: application/json
+Authorization: bearer <TOKEN>
+
+// UPDATE ME
+### 
+PUT http://localhost:3001/api/auth/me
+Content-Type: application/json
+Authorization: bearer <TOKEN>
+
+{
+  "name": "sup User",
+  "bio": "I'm the super user",
+  "location": "Hell, Norway"
+}
+
+### 
+PUT http://localhost:3001/api/auth/me
+Content-Type: application/json
+Authorization: bearer <TOKEN>
+
+{
+  "name": "SUPER USER"
+}
+
+### 
+PUT http://localhost:3001/api/auth/me
+Content-Type: application/json
+Authorization: bearer <TOKEN>
+
+{
+  "bio": "this is bio",
+  "location": ""
+}
+
