@@ -3,9 +3,10 @@ const User = require('../models/user');
 
 const register = yup.object({
   body: yup.object({
-    name: yup.string().required().max(50),
+    name: yup.string().trim().required().max(50),
     username: yup
       .string()
+      .trim()
       .required()
       .min(5)
       .max(15)
@@ -23,6 +24,7 @@ const register = yup.object({
       ),
     email: yup
       .string()
+      .trim()
       .email()
       .required()
       .test('uniqueEmail', 'email has already been taken.', async (value) => {
@@ -35,16 +37,16 @@ const register = yup.object({
 
 const login = yup.object({
   body: yup.object({
-    email: yup.string().email().required(),
+    email: yup.string().trim().email().required(),
     password: yup.string().required().max(128),
   }),
 });
 
 const updateMe = yup.object({
   body: yup.object({
-    name: yup.string().required().max(50),
-    bio: yup.string().max(160),
-    location: yup.string().max(30),
+    name: yup.string().trim().required().max(50),
+    bio: yup.string().trim().max(160),
+    location: yup.string().trim().max(30),
   }),
 });
 

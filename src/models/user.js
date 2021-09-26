@@ -4,6 +4,7 @@ const userSchema = new mongoose.Schema(
   {
     email: {
       type: String,
+      trim: true,
       required: true,
       unique: true,
     },
@@ -13,22 +14,26 @@ const userSchema = new mongoose.Schema(
     },
     username: {
       type: String,
+      trim: true,
       required: true,
       unique: true,
       minLength: 5,
     },
     name: {
       type: String,
+      trim: true,
       required: true,
       maxLength: 50,
     },
     bio: {
       type: String,
+      trim: true,
       maxLength: 160,
       default: '',
     },
     location: {
       type: String,
+      trim: true,
       maxLength: 30,
       default: '',
     },
