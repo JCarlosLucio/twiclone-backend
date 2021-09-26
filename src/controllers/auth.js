@@ -8,10 +8,20 @@ const User = require('../models/user');
 
 router.post('/register', validate(register), async (req, res) => {
   const { name, username, email, password } = req.body;
+  const avatar = {
+    url: `https://avatars.dicebear.com/api/bottts/${username}.svg`,
+    filename: null,
+  };
 
   const saltRounds = 10;
   const passwordHash = await bcrypt.hash(password, saltRounds);
-  const newUser = new User({ name, username, email, password: passwordHash });
+  const newUser = new User({
+    avatar,
+    name,
+    username,
+    email,
+    password: passwordHash,
+  });
 
   const savedUser = await newUser.save();
 
