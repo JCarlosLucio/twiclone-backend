@@ -38,7 +38,10 @@ const userSchema = new mongoose.Schema(
       default: '',
     },
     avatar: {
-      url: { type: String },
+      url: {
+        type: String,
+        default: null,
+      },
       filename: {
         type: String,
         default: null,
