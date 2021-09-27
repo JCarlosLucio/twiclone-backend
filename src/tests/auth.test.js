@@ -5,6 +5,7 @@ const supertest = require('supertest');
 const app = require('../app');
 const User = require('../models/user');
 const { usersInDb } = require('./test_helper');
+const { cloudinaryDeleteTest } = require('../utils/cloudinary');
 
 const api = supertest(app);
 
@@ -272,7 +273,7 @@ describe('Auth', () => {
   });
 
   describe('updating me', () => {
-    test('should update me', async () => {
+    test('should update me without images', async () => {
       const response = await api
         .post('/api/auth/login')
         .send({ email: 'test@example.com', password: 'test' });
@@ -288,7 +289,9 @@ describe('Auth', () => {
       const meResponse = await api
         .put('/api/auth/me')
         .set('Authorization', token)
-        .send(updatedMe)
+        .field('name', updatedMe.name)
+        .field('bio', updatedMe.bio)
+        .field('location', updatedMe.location)
         .expect(200);
 
       expect(meResponse.body.name).not.toBe(response.body.name);
@@ -297,6 +300,47 @@ describe('Auth', () => {
       expect(meResponse.body.bio).toBe(updatedMe.bio);
       expect(meResponse.body.location).not.toBe(response.body.location);
       expect(meResponse.body.location).toBe(updatedMe.location);
+    });
+
+    test('should update me with avatar/banner/both', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const updatedMe = {
+        name: 'UPDATED NAME',
+      };
+
+      const file = `${__dirname}/testFiles/test.jpg`;
+
+      const meResponse = await api
+        .put('/api/auth/me')
+        .set('Authorization', token)
+        .field('name', updatedMe.name)
+        .attach('avatar', file)
+        .attach('banner', file)
+        .expect(200);
+
+      expect(meResponse.body.name).not.toBe(response.body.name);
+      expect(meResponse.body.name).toBe(updatedMe.name);
+      expect(meResponse.body.avatar.url).not.toBe(response.body.avatar?.url);
+      expect(meResponse.body.avatar.url).toMatch(
+        /res\.cloudinary\.com(.*)\/twiclone\/test/
+      );
+      expect(meResponse.body.avatar.url).not.toBe(response.body.banner?.url);
+      expect(meResponse.body.banner.url).toMatch(
+        /res\.cloudinary\.com(.*)\/twiclone\/test/
+      );
+      expect(meResponse.body.avatar.filename).not.toBe(
+        response.body.avatar?.filename
+      );
+      expect(meResponse.body.avatar.filename).toMatch(/twiclone\/test/);
+      expect(meResponse.body.avatar.filename).not.toBe(
+        response.body.banner?.filename
+      );
+      expect(meResponse.body.banner.filename).toMatch(/twiclone\/test/);
     });
 
     test('should update me without bio/location', async () => {
@@ -313,13 +357,91 @@ describe('Auth', () => {
       const meResponse = await api
         .put('/api/auth/me')
         .set('Authorization', token)
-        .send(updatedMe)
+        .field('name', updatedMe.name)
         .expect(200);
 
       expect(meResponse.body.name).not.toBe(response.body.name);
       expect(meResponse.body.name).toBe(updatedMe.name);
       expect(meResponse.body.bio).toBe('');
       expect(meResponse.body.location).toBe('');
+    });
+
+    test('should file with 400 Bad Request if avatar too large', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const updatedMe = {
+        name: 'UPDATED NAME',
+      };
+
+      // A buffer is used to mock the image
+      const avatarBuffer = Buffer.from('a'.repeat(4 * 1024 * 1024)); // 4MB
+      const bannerBuffer = Buffer.from('a'.repeat(1 * 1024 * 1024)); // 1MB
+
+      const meResponse = await api
+        .put('/api/auth/me')
+        .set('Authorization', token)
+        .field('name', updatedMe.name)
+        .attach('avatar', avatarBuffer, 'avatar.png')
+        .attach('banner', bannerBuffer, 'banner.png')
+        .expect(400);
+
+      expect(meResponse.body.error).toBe('File too large');
+    });
+
+    test('should file with 400 Bad Request if banner if type not jpg/jped/png/gif', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const updatedMe = {
+        name: 'UPDATED NAME',
+      };
+
+      // A buffer is used to mock the image
+      const buffer = Buffer.from('a'.repeat(1 * 1024 * 1024)); // 1MB
+
+      const meResponse = await api
+        .put('/api/auth/me')
+        .set('Authorization', token)
+        .field('name', updatedMe.name)
+        .attach('avatar', buffer, 'avatar.png')
+        .attach('banner', buffer, 'banner.txt')
+        .expect(400);
+
+      expect(meResponse.body.error).toBe(
+        'Only .png, .jpg, .jpeg, and .gif formats allowed'
+      );
+    });
+
+    test('should file with 400 Bad Request if unexpected field', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const updatedMe = {
+        name: 'UPDATED NAME',
+      };
+
+      // A buffer is used to mock the image
+      const buffer = Buffer.from('a'.repeat(1 * 1024 * 1024)); // 1MB
+
+      const meResponse = await api
+        .put('/api/auth/me')
+        .set('Authorization', token)
+        .field('name', updatedMe.name)
+        .attach('avatar', buffer, 'avatar.jpg')
+        .attach('unexpected', buffer, 'unexpected.jpg')
+        .expect(400);
+
+      expect(meResponse.body.error).toBe('Unexpected field');
     });
 
     test('should fail with 400 Bad Request if name is missing', async () => {
@@ -346,6 +468,7 @@ describe('Auth', () => {
 });
 
 afterAll(() => {
+  cloudinaryDeleteTest();
   mongoose.connection.close();
   // extended timeout to avoid "Jest did not exit one second after the test run has completed" warning (although it still may show warning sometimes)
 }, 100000);
