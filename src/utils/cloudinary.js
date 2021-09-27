@@ -17,7 +17,9 @@ const cloudinaryUpload = (path) =>
     allowed_formats: ['png', 'jpg', 'jpeg', 'gif'],
   });
 
+const cloudinaryDestroy = (filename) => cloudinary.uploader.destroy(filename);
+
 const cloudinaryDeleteTest = () =>
   cloudinary.api.delete_resources_by_prefix(testFolder);
 
-module.exports = { cloudinaryUpload, cloudinaryDeleteTest };
+module.exports = { cloudinaryUpload, cloudinaryDestroy, cloudinaryDeleteTest };
