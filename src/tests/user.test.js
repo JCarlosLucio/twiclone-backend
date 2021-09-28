@@ -4,7 +4,7 @@ const supertest = require('supertest');
 
 const app = require('../app');
 const User = require('../models/user');
-// const { usersInDb } = require('./test_helper');
+const { usersInDb } = require('./test_helper');
 
 const api = supertest(app);
 
@@ -20,7 +20,14 @@ describe('Users', () => {
       email: 'test@example.com',
       password,
     });
+    const otherUser = new User({
+      name: 'OtherUser',
+      username: 'otheruser',
+      email: 'otheruser@example.com',
+      password,
+    });
     await user.save();
+    await otherUser.save();
     // extended timeout to avoid failing tests for timeout when running beforeEach
   }, 100000);
 
@@ -34,7 +41,7 @@ describe('Users', () => {
 
     test('should gets all users', async () => {
       const response = await api.get('/api/users');
-      expect(response.body).toHaveLength(1);
+      expect(response.body).toHaveLength(2);
     });
 
     test('should return users without password field', async () => {
@@ -69,6 +76,61 @@ describe('Users', () => {
       const userResponse = await api.get(`/api/users/${username}`).expect(404);
 
       expect(userResponse.body.error).toBe('User not found.');
+    });
+  });
+
+  describe('following user', () => {
+    test('should follow user', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const usersAtStart = await usersInDb();
+      const userToFollow = usersAtStart[1];
+
+      await api
+        .post(`/api/users/${userToFollow.id}/follow`)
+        .set('Authorization', token)
+        .expect(200);
+
+      const usersAtEnd = await usersInDb();
+
+      expect(usersAtEnd[1].followers).toHaveLength(1);
+      expect(usersAtEnd[1].followers[0].toString()).toBe(usersAtStart[0].id);
+      expect(usersAtEnd[0].following).toHaveLength(1);
+      expect(usersAtEnd[0].following[0].toString()).toContain(userToFollow.id);
+    });
+
+    test('should fail with 403 Forbidden if user tries to follow themselves', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const userResponse = await api
+        .post(`/api/users/${response.body.id}/follow`)
+        .set('Authorization', token)
+        .expect(403);
+
+      expect(userResponse.body.error).toBe('Cannot follow yourself');
+    });
+
+    test('should fail with 400 Bad Request if user id is invalid', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const userResponse = await api
+        .post('/api/users/notavalidid/follow')
+        .set('Authorization', token)
+        .expect(400);
+
+      expect(userResponse.body.error).toBe('malformatted id');
     });
   });
 });
