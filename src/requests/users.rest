@@ -1,0 +1,10 @@
+GET http://localhost:3001/api/users
+
+###
+GET http://localhost:3001/api/users/:username
+
+###
+POST http://localhost:3001/api/users/:id/follow
+Content-Type: application/json
+Authorization: bearer <TOKEN>
+
