@@ -47,9 +47,14 @@ router.post(
     const { content, parent } = req.body; // parsed by multer
     const files = req.files; // also parsed by multer
 
+    // checks if there's content or images
+    if (!(files?.length > 0 || content)) {
+      return res.status(400).json({ error: 'content or images are required' });
+    }
+
     // handle images upload to cloudinary
     let images = [];
-    if (files) {
+    if (files?.length > 0) {
       const imageFilesPromises = files.map((image) => {
         return cloudinaryUpload(image.path);
       });
