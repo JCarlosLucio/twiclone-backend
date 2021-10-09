@@ -133,6 +133,26 @@ describe('Tweets', () => {
       expect(tweetResponse.body.images).toHaveLength(1);
     });
 
+    test.only('should add a tweet with image, no content, and no parent', async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+      const file = `${__dirname}/testFiles/test.jpg`;
+
+      const tweetResponse = await api
+        .post('/api/tweets')
+        .set('Authorization', token)
+        .attach('images', file)
+        .expect(201);
+
+      const tweetsAfter = await tweetsInDb();
+
+      expect(tweetsAfter).toHaveLength(initialTweets.length + 1);
+      expect(tweetResponse.body.images).toHaveLength(1);
+    });
+
     test('should add a tweet with parent and add tweet as reply to parent', async () => {
       const response = await api
         .post('/api/auth/login')
@@ -240,7 +260,7 @@ describe('Tweets', () => {
       expect(tweetResponse.body.error).toBe('Unexpected field');
     });
 
-    test('should fail with 400 Bad Request if content is missing', async () => {
+    test('should fail with 400 Bad Request if content and files are missing', async () => {
       const response = await api
         .post('/api/auth/login')
         .send({ email: 'test@example.com', password: 'test' });
@@ -251,7 +271,7 @@ describe('Tweets', () => {
         .post('/api/tweets')
         .set('Authorization', token)
         .expect(400);
-      expect(tweetResponse.body.error).toBe('body.content is a required field');
+      expect(tweetResponse.body.error).toBe('content or images are required');
     });
 
     test('should fail with 400 Bad Request if content is too long', async () => {
