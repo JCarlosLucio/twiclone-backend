@@ -5,8 +5,8 @@ const tweetSchema = new mongoose.Schema(
     content: {
       type: String,
       trim: true,
-      required: true,
       maxLength: 280,
+      default: '',
     },
     parent: {
       type: mongoose.Schema.Types.ObjectId,
