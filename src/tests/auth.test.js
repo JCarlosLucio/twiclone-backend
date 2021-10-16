@@ -100,7 +100,7 @@ describe('Auth', () => {
         .send(newUser)
         .expect(400);
 
-      expect(response.body.error).toBe('email has already been taken.');
+      expect(response.body.error).toBe('Email has already been taken');
     });
 
     test('should fail with 400 Bad Request if username is missing', async () => {
@@ -159,7 +159,7 @@ describe('Auth', () => {
         .send(newUser)
         .expect(400);
 
-      expect(response.body.error).toBe('username has already been taken.');
+      expect(response.body.error).toBe('Username has already been taken');
     });
 
     test('should fail with 400 Bad Request if name is missing', async () => {

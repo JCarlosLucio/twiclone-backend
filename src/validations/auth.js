@@ -14,20 +14,16 @@ const register = yup.object({
         /^[a-zA-Z0-9_]+$/,
         'username must contain only letters, numbers, underscores and no spaces'
       )
-      .test(
-        'uniqueUsername',
-        'username has already been taken.',
-        async (value) => {
-          const user = await User.findOne({ username: value });
-          return !user;
-        }
-      ),
+      .test('username', 'Username has already been taken', async (value) => {
+        const user = await User.findOne({ username: value });
+        return !user;
+      }),
     email: yup
       .string()
       .trim()
       .email()
       .required()
-      .test('uniqueEmail', 'email has already been taken.', async (value) => {
+      .test('email', 'Email has already been taken', async (value) => {
         const user = await User.findOne({ email: value });
         return !user;
       }),
