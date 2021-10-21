@@ -5,6 +5,9 @@ const upload = require('../utils/multer');
 const { createTweet } = require('../validations/tweets');
 const Tweet = require('../models/tweet');
 
+/**
+ * Get Tweets paginated
+ */
 router.get('/', async (req, res) => {
   const currentPage = Number(req.query.page) || 1;
   const perPage = Number(req.query.limit) || 10;
@@ -51,6 +54,7 @@ router.get('/:id', async (req, res) => {
 });
 
 /**
+ * Create Tweet / Reply
  * multer(upload) middleware parses body and files(images) from
  * Content-Type': multipart/form-data which is needed for uploading images.
  * Since multer parses body and files, validation has to be after
@@ -102,6 +106,9 @@ router.post(
   }
 );
 
+/**
+ * Like / Unlike Tweet
+ */
 router.put('/:id/like', userExtractor, async (req, res) => {
   const id = req.params.id;
   const user = req.user; // comes from userExtractor middleware
