@@ -38,6 +38,10 @@ const initialTweets = [
   },
 ];
 
+const initialReplies = Array.from({ length: 5 }, (_, i) => ({
+  content: `${i + 1}`,
+}));
+
 const usersInDb = async () => {
   const users = await User.find({});
   return users.map((user) => user.toJSON());
@@ -48,4 +52,4 @@ const tweetsInDb = async () => {
   return tweets.map((tweet) => tweet.toJSON());
 };
 
-module.exports = { initialTweets, usersInDb, tweetsInDb };
+module.exports = { initialTweets, initialReplies, usersInDb, tweetsInDb };
