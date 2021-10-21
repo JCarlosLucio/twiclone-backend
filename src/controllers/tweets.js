@@ -31,6 +31,26 @@ router.get('/', async (req, res) => {
 });
 
 /**
+ * Get Tweet by Id
+ */
+router.get('/:id', async (req, res) => {
+  const id = req.params.id;
+
+  const tweet = await Tweet.findById(id).populate('user', {
+    username: 1,
+    name: 1,
+    avatar: 1,
+    bio: 1,
+  });
+
+  if (!tweet) {
+    return res.status(404).json({ error: 'Tweet not found.' });
+  }
+
+  res.status(200).json(tweet);
+});
+
+/**
  * multer(upload) middleware parses body and files(images) from
  * Content-Type': multipart/form-data which is needed for uploading images.
  * Since multer parses body and files, validation has to be after
