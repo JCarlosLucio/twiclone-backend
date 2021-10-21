@@ -15,3 +15,11 @@ Authorization: bearer <TOKEN>
 
 {
 }
+
+###
+// Tweet replies
+GET http://localhost:3001/api/tweets/61607f2a5039068dc8eb561f/replies
+Content-Type: application/json
+
+{
+}
