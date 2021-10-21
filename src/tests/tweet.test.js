@@ -4,7 +4,7 @@ const { Buffer } = require('buffer');
 const supertest = require('supertest');
 
 const app = require('../app');
-const { initialTweets, tweetsInDb } = require('./test_helper');
+const { initialTweets, initialReplies, tweetsInDb } = require('./test_helper');
 const Tweet = require('../models/tweet');
 const User = require('../models/user');
 const { cloudinaryDeleteTest } = require('../utils/cloudinary');
@@ -133,7 +133,7 @@ describe('Tweets', () => {
       expect(tweetResponse.body.images).toHaveLength(1);
     });
 
-    test.only('should add a tweet with image, no content, and no parent', async () => {
+    test('should add a tweet with image, no content, and no parent', async () => {
       const response = await api
         .post('/api/auth/login')
         .send({ email: 'test@example.com', password: 'test' });
@@ -398,6 +398,69 @@ describe('Tweets', () => {
         .expect(404);
 
       expect(tweetResponse.body.error).toBe('Tweet not found.');
+    });
+  });
+
+  describe('getting replies', () => {
+    beforeEach(async () => {
+      const response = await api
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'test' });
+
+      const token = `Bearer ${response.body.token}`;
+
+      const tweetsAtStart = await tweetsInDb();
+      const parentTweetStart = tweetsAtStart[0];
+
+      const repliesPromises = initialReplies.map(({ content }) => {
+        return api
+          .post('/api/tweets')
+          .set('Authorization', token)
+          .field('content', content)
+          .field('parent', parentTweetStart.id);
+      });
+
+      await Promise.all(repliesPromises);
+    });
+
+    test('should return replies as json', async () => {
+      const tweetsAtStart = await tweetsInDb();
+      const tweet = tweetsAtStart[0];
+
+      await api
+        .get(`/api/tweets/${tweet.id}/replies`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+    });
+
+    test('should return totalItems/currentPage/replies/lastPage according to page/limit', async () => {
+      const tweetsAtStart = await tweetsInDb();
+      const tweet = tweetsAtStart[0];
+      const limit = 3;
+      const page = 1;
+
+      const response = await api
+        .get(`/api/tweets/${tweet.id}/replies?page=${page}&limit=${limit}`)
+        .expect(200);
+
+      expect(response.body.replies).toHaveLength(limit);
+      expect(response.body.currentPage).toBe(page);
+
+      const expectedLastPage = Math.ceil(initialReplies.length / limit);
+      expect(response.body.lastPage).toBe(expectedLastPage);
+    });
+
+    test.only('should fail with 404 Not Found if page not found', async () => {
+      const tweetsAtStart = await tweetsInDb();
+      const tweet = tweetsAtStart[0];
+      const limit = 11;
+      const page = 3;
+
+      const response = await api
+        .get(`/api/tweets/${tweet.id}/replies?page=${page}&limit=${limit}`)
+        .expect(404);
+
+      expect(response.body.error).toBe('Page not found.');
     });
   });
 });
