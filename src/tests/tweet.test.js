@@ -83,6 +83,48 @@ describe('Tweets', () => {
     });
   });
 
+  describe('getting tweet by id', () => {
+    test('should return tweet as json', async () => {
+      const tweetsAtStart = await tweetsInDb();
+      const tweetToGet = tweetsAtStart[0];
+
+      await api
+        .get(`/api/tweets/${tweetToGet.id}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+    });
+
+    test('should return tweet with user without password', async () => {
+      const tweetsAtStart = await tweetsInDb();
+      const tweetToGet = tweetsAtStart[0];
+
+      const response = await api
+        .get(`/api/tweets/${tweetToGet.id}`)
+        .expect(200);
+
+      const tweetProps = Object.keys(response.body);
+      expect(tweetProps).toContain('id');
+      expect(tweetProps).toContain('content');
+      expect(tweetProps).toContain('parent');
+      expect(tweetProps).toContain('user');
+      expect(tweetProps).toContain('likes');
+      expect(tweetProps).toContain('replies');
+      expect(tweetProps).toContain('images');
+      expect(tweetProps).toContain('createdAt');
+      expect(tweetProps).toContain('updatedAt');
+
+      const userProps = Object.keys(response.body.user);
+      expect(userProps).not.toContain('password');
+    });
+
+    test.only('should fail with 404 Tweet Not Found if tweet not found', async () => {
+      const response = await api
+        .get('/api/tweets/12347f2a5039068dc8ac561f')
+        .expect(404);
+      expect(response.body.error).toBe('Tweet not found.');
+    });
+  });
+
   describe('creating tweets', () => {
     test('should add a tweet without images and parent', async () => {
       const response = await api
@@ -450,7 +492,7 @@ describe('Tweets', () => {
       expect(response.body.lastPage).toBe(expectedLastPage);
     });
 
-    test.only('should fail with 404 Not Found if page not found', async () => {
+    test('should fail with 404 Not Found if page not found', async () => {
       const tweetsAtStart = await tweetsInDb();
       const tweet = tweetsAtStart[0];
       const limit = 11;
