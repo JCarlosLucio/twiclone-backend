@@ -167,7 +167,7 @@ router.get('/:id/replies', async (req, res) => {
       avatar: 1,
     });
 
-  res.status(200).json({ replies, totalItems, currentPage, lastPage });
+  res.status(200).json({ tweets: replies, totalItems, currentPage, lastPage });
 });
 
 module.exports = router;
