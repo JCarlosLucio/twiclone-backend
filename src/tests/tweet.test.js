@@ -475,7 +475,7 @@ describe('Tweets', () => {
         .expect('Content-Type', /application\/json/);
     });
 
-    test('should return totalItems/currentPage/replies/lastPage according to page/limit', async () => {
+    test('should return totalItems/currentPage/tweets/lastPage according to page/limit', async () => {
       const tweetsAtStart = await tweetsInDb();
       const tweet = tweetsAtStart[0];
       const limit = 3;
@@ -485,7 +485,7 @@ describe('Tweets', () => {
         .get(`/api/tweets/${tweet.id}/replies?page=${page}&limit=${limit}`)
         .expect(200);
 
-      expect(response.body.replies).toHaveLength(limit);
+      expect(response.body.tweets).toHaveLength(limit);
       expect(response.body.currentPage).toBe(page);
 
       const expectedLastPage = Math.ceil(initialReplies.length / limit);
