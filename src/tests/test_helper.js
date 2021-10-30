@@ -42,6 +42,14 @@ const initialReplies = Array.from({ length: 5 }, (_, i) => ({
   content: `${i + 1}`,
 }));
 
+const initialUsers = (followerId) =>
+  Array.from({ length: 3 }, (_, i) => ({
+    name: `Tester${i + 1}`,
+    username: `tester${i + 1}`,
+    email: `test${i + 1}@example.com`,
+    followers: Array.from({ length: i }, () => followerId),
+  }));
+
 const usersInDb = async () => {
   const users = await User.find({});
   return users.map((user) => user.toJSON());
@@ -52,4 +60,10 @@ const tweetsInDb = async () => {
   return tweets.map((tweet) => tweet.toJSON());
 };
 
-module.exports = { initialTweets, initialReplies, usersInDb, tweetsInDb };
+module.exports = {
+  initialTweets,
+  initialReplies,
+  initialUsers,
+  usersInDb,
+  tweetsInDb,
+};
