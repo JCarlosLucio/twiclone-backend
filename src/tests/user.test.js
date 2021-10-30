@@ -149,6 +149,22 @@ describe('Users', () => {
 
       expect(usersResponse.body).toHaveLength(3);
     });
+
+    test('should get whotofollow users from most to least followers', async () => {
+      const usersAtStart = await usersInDb();
+      const userId = usersAtStart[0].id;
+
+      const usersResponse = await api
+        .get(`/api/users/${userId}/whotofollow`)
+        .expect(200);
+
+      expect(usersResponse.body[0].followers.length).toBeGreaterThanOrEqual(
+        usersResponse.body[1].followers.length
+      );
+      expect(usersResponse.body[1].followers.length).toBeGreaterThanOrEqual(
+        usersResponse.body[2].followers.length
+      );
+    });
   });
 });
 
