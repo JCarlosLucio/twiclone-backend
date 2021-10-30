@@ -165,6 +165,18 @@ describe('Users', () => {
         usersResponse.body[2].followers.length
       );
     });
+
+    test('should get whotofollow users without user for whotofollow', async () => {
+      const usersAtStart = await usersInDb();
+      const userId = usersAtStart[0].id;
+
+      const usersResponse = await api
+        .get(`/api/users/${userId}/whotofollow`)
+        .expect(200);
+
+      const usersIds = usersResponse.body.map((user) => user.id);
+      expect(usersIds).not.toContain(userId);
+    });
   });
 });
 
