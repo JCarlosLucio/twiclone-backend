@@ -4,7 +4,7 @@ const supertest = require('supertest');
 
 const app = require('../app');
 const User = require('../models/user');
-const { usersInDb } = require('./test_helper');
+const { usersInDb, initialUsers } = require('./test_helper');
 
 const api = supertest(app);
 
@@ -26,8 +26,12 @@ describe('Users', () => {
       email: 'otheruser@example.com',
       password,
     });
+
     await user.save();
     await otherUser.save();
+    await User.create(
+      initialUsers(otherUser._id).map((user) => ({ ...user, password }))
+    );
     // extended timeout to avoid failing tests for timeout when running beforeEach
   }, 100000);
 
@@ -41,7 +45,7 @@ describe('Users', () => {
 
     test('should gets all users', async () => {
       const response = await api.get('/api/users');
-      expect(response.body).toHaveLength(2);
+      expect(response.body).toHaveLength(5);
     });
 
     test('should return users without password field', async () => {
@@ -131,6 +135,19 @@ describe('Users', () => {
         .expect(400);
 
       expect(userResponse.body.error).toBe('malformatted id');
+    });
+  });
+
+  describe('getting whotofollow', () => {
+    test('should get only 3 whotofollow users ', async () => {
+      const usersAtStart = await usersInDb();
+      const userId = usersAtStart[0].id;
+
+      const usersResponse = await api
+        .get(`/api/users/${userId}/whotofollow`)
+        .expect(200);
+
+      expect(usersResponse.body).toHaveLength(3);
     });
   });
 });
