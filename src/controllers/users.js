@@ -47,4 +47,19 @@ router.post('/:id/follow', userExtractor, async (req, res) => {
   res.status(200).json({ updatedMe, updatedUser });
 });
 
+router.get('/:id/whotofollow', async (req, res) => {
+  const id = req.params.id;
+
+  // get users
+  // that aren't the user (with given id)
+  // that haven't been followed
+  // sort from most to least followers
+  // limit to three users
+  const users = await User.find({ _id: { $ne: id }, followers: { $ne: id } })
+    .sort({ followers: -1 })
+    .limit(3);
+
+  res.status(200).json(users);
+});
+
 module.exports = router;
