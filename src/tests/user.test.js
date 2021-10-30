@@ -177,6 +177,21 @@ describe('Users', () => {
       const usersIds = usersResponse.body.map((user) => user.id);
       expect(usersIds).not.toContain(userId);
     });
+
+    test.only('should get whotofollow users that user has not followed', async () => {
+      const usersAtStart = await usersInDb();
+      const userId = usersAtStart[0].id;
+
+      const usersResponse = await api
+        .get(`/api/users/${userId}/whotofollow`)
+        .expect(200);
+
+      const usersFollowersIds = usersResponse.body.flatMap(
+        (user) => user.followers
+      );
+
+      expect(usersFollowersIds).not.toContain(userId);
+    });
   });
 });
 
