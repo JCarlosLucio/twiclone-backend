@@ -8,3 +8,5 @@ POST http://localhost:3001/api/users/:id/follow
 Content-Type: application/json
 Authorization: bearer <TOKEN>
 
+###
+GET http://localhost:3001/api/users/:id/whotofollow
