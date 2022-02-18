@@ -2,4 +2,4 @@
 
 ## Overview
 
-The backend for a twiclone (Twitter replica)
+The backend for Twiclone (a Twitter replica)
