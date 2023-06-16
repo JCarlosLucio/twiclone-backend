@@ -8,8 +8,8 @@ const createTweet = yup.object({
       .string()
       .trim()
       .nullable()
-      .test('isValidObjectId', 'malformatted id', (value) =>
-        isValidObjectId(value)
+      .test('isValidObjectId', 'malformatted id', (id) =>
+        !id ? true : isValidObjectId(id)
       ),
   }),
 });
