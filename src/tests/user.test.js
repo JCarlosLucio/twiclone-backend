@@ -178,7 +178,7 @@ describe('Users', () => {
       expect(usersIds).not.toContain(userId);
     });
 
-    test.only('should get whotofollow users that user has not followed', async () => {
+    test('should get whotofollow users that user has not followed', async () => {
       const usersAtStart = await usersInDb();
       const userId = usersAtStart[0].id;
 

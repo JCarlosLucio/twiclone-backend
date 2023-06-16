@@ -117,7 +117,7 @@ describe('Tweets', () => {
       expect(userProps).not.toContain('password');
     });
 
-    test.only('should fail with 404 Tweet Not Found if tweet not found', async () => {
+    test('should fail with 404 Tweet Not Found if tweet not found', async () => {
       const response = await api
         .get('/api/tweets/12347f2a5039068dc8ac561f')
         .expect(404);
