@@ -26,6 +26,9 @@
     "url": "https://github.com/JCarlosLucio/twiclone-backend/issues"
   },
   "homepage": "https://github.com/JCarlosLucio/twiclone-backend#readme",
+  "engines": {
+    "node": ">= 16"
+  },
   "dependencies": {
     "bcrypt": "^5.1.0",
     "cloudinary": "^1.37.1",
