@@ -9,6 +9,6 @@ const MONGODB_URI =
     ? process.env.MONGODB_URI
     : process.env.TEST_MONGODB_URI;
 
-const PORT = process.env.PORT;
+const PORT = Number(process.env.PORT || 3001);
 
 module.exports = { JWT_SECRET, MONGODB_URI, PORT };
