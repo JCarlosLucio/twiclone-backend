@@ -1,7 +1,7 @@
 {
   "name": "twiclone-backend",
   "version": "0.0.1",
-  "description": "backen for twiclone",
+  "description": "backend for twiclone",
   "main": "index.js",
   "private": true,
   "scripts": {
