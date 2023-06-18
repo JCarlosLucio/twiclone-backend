@@ -12,7 +12,7 @@ const register = yup.object({
       .max(15)
       .matches(
         /^[a-zA-Z0-9_]+$/,
-        'username must contain only letters, numbers, underscores and no spaces'
+        'username must contain only letters, numbers, underscores and no spaces',
       )
       .test('username', 'Username has already been taken', async (value) => {
         const user = await User.findOne({ username: value });

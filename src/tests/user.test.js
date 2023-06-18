@@ -30,7 +30,7 @@ describe('Users', () => {
     await user.save();
     await otherUser.save();
     await User.create(
-      initialUsers(otherUser._id).map((user) => ({ ...user, password }))
+      initialUsers(otherUser._id).map((user) => ({ ...user, password })),
     );
     // extended timeout to avoid failing tests for timeout when running beforeEach
   }, 100000);
@@ -159,10 +159,10 @@ describe('Users', () => {
         .expect(200);
 
       expect(usersResponse.body[0].followers.length).toBeGreaterThanOrEqual(
-        usersResponse.body[1].followers.length
+        usersResponse.body[1].followers.length,
       );
       expect(usersResponse.body[1].followers.length).toBeGreaterThanOrEqual(
-        usersResponse.body[2].followers.length
+        usersResponse.body[2].followers.length,
       );
     });
 
@@ -187,7 +187,7 @@ describe('Users', () => {
         .expect(200);
 
       const usersFollowersIds = usersResponse.body.flatMap(
-        (user) => user.followers
+        (user) => user.followers,
       );
 
       expect(usersFollowersIds).not.toContain(userId);

@@ -103,7 +103,7 @@ router.post(
     }
 
     res.status(201).json(savedTweet);
-  }
+  },
 );
 
 /**
