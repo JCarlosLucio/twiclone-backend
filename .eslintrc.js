@@ -5,15 +5,17 @@ module.exports = {
     node: true,
     jest: true,
   },
-  extends: 'eslint:recommended',
+  extends: [
+    'eslint:recommended',
+    'prettier', // Make sure this is always the last element in the array.
+  ],
   parserOptions: {
     ecmaVersion: 12,
   },
   rules: {
-    indent: ['error', 2],
-    'linebreak-style': ['error', 'unix'],
-    quotes: ['error', 'single', { avoidEscape: true }],
-    semi: ['error', 'always'],
+    eqeqeq: 'error',
     'no-console': 0,
+    'no-var': 'error',
+    'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
   },
 };

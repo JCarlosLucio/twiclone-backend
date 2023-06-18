@@ -7,7 +7,8 @@
     "start": "cross-env NODE_ENV=production node src/index.js",
     "dev": "cross-env NODE_ENV=development nodemon src/index.js",
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "format": "prettier --list-different --write \"./src/**/*.{js,md}\""
   },
   "repository": {
     "type": "git",
@@ -40,8 +41,10 @@
     "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
     "eslint": "^8.43.0",
+    "eslint-config-prettier": "^8.8.0",
     "jest": "^29.5.0",
     "nodemon": "^2.0.22",
+    "prettier": "^2.8.8",
     "supertest": "^6.3.3"
   }
 }

@@ -77,7 +77,7 @@ describe('Tweets', () => {
     test('should return tweets with user without password', async () => {
       const response = await api.get('/api/tweets');
       const userProps = response.body.tweets.flatMap((tweet) =>
-        Object.keys(tweet.user)
+        Object.keys(tweet.user),
       );
       expect(userProps).not.toContain('password');
     });
@@ -226,7 +226,7 @@ describe('Tweets', () => {
       expect(tweetResponse.body.parent).toBe(newTweet.parent);
       expect(parentTweetAtEnd.replies).toHaveLength(1);
       expect(parentTweetAtEnd.replies[0].toString()).toBe(
-        tweetResponse.body.id
+        tweetResponse.body.id,
       );
     });
 
@@ -272,7 +272,7 @@ describe('Tweets', () => {
         .expect(400);
 
       expect(tweetResponse.body.error).toBe(
-        'Only .png, .jpg, .jpeg, and .gif formats allowed'
+        'Only .png, .jpg, .jpeg, and .gif formats allowed',
       );
     });
 
@@ -335,7 +335,7 @@ describe('Tweets', () => {
         .expect(400);
 
       expect(tweetResponse.body.error).toBe(
-        'body.content must be at most 280 characters'
+        'body.content must be at most 280 characters',
       );
     });
 
@@ -400,7 +400,7 @@ describe('Tweets', () => {
 
       const tweetsAfterLike = await tweetsInDb();
       expect(tweetsAfterLike[0].likes).toHaveLength(
-        tweetToLike.likes.length + 1
+        tweetToLike.likes.length + 1,
       );
 
       await api

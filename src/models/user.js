@@ -70,7 +70,7 @@ const userSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 userSchema.set('toJSON', {

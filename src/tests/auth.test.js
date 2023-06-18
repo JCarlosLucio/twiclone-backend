@@ -327,18 +327,18 @@ describe('Auth', () => {
       expect(meResponse.body.name).toBe(updatedMe.name);
       expect(meResponse.body.avatar.url).not.toBe(response.body.avatar?.url);
       expect(meResponse.body.avatar.url).toMatch(
-        /res\.cloudinary\.com(.*)\/twiclone\/test/
+        /res\.cloudinary\.com(.*)\/twiclone\/test/,
       );
       expect(meResponse.body.avatar.url).not.toBe(response.body.banner?.url);
       expect(meResponse.body.banner.url).toMatch(
-        /res\.cloudinary\.com(.*)\/twiclone\/test/
+        /res\.cloudinary\.com(.*)\/twiclone\/test/,
       );
       expect(meResponse.body.avatar.filename).not.toBe(
-        response.body.avatar?.filename
+        response.body.avatar?.filename,
       );
       expect(meResponse.body.avatar.filename).toMatch(/twiclone\/test/);
       expect(meResponse.body.avatar.filename).not.toBe(
-        response.body.banner?.filename
+        response.body.banner?.filename,
       );
       expect(meResponse.body.banner.filename).toMatch(/twiclone\/test/);
     });
@@ -415,7 +415,7 @@ describe('Auth', () => {
         .expect(400);
 
       expect(meResponse.body.error).toBe(
-        'Only .png, .jpg, .jpeg, and .gif formats allowed'
+        'Only .png, .jpg, .jpeg, and .gif formats allowed',
       );
     });
 

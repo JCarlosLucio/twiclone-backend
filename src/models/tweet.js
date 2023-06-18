@@ -37,7 +37,7 @@ const tweetSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 tweetSchema.set('toJSON', {

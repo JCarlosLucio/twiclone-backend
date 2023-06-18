@@ -91,7 +91,7 @@ router.put(
         // add delete promise to delete old image from cloudinary
         if (user[image.fieldname].filename) {
           filesDeletePromises.push(
-            cloudinaryDestroy(user[image.fieldname].filename)
+            cloudinaryDestroy(user[image.fieldname].filename),
           );
         }
 
@@ -115,7 +115,7 @@ router.put(
     }
 
     res.status(200).json({ token: req.token, ...updatedUser.toJSON() });
-  }
+  },
 );
 
 module.exports = router;
