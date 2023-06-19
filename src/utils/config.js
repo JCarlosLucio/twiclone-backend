@@ -11,4 +11,6 @@ const MONGODB_URI =
 
 const PORT = Number(process.env.PORT || 3001);
 
-module.exports = { JWT_SECRET, MONGODB_URI, PORT };
+const CORS_ORIGIN = process.env.CORS_ORIGIN || '';
+
+module.exports = { JWT_SECRET, MONGODB_URI, PORT, CORS_ORIGIN };

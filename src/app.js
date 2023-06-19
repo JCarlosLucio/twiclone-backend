@@ -7,6 +7,7 @@ const authRouter = require('./controllers/auth');
 const usersRouter = require('./controllers/users');
 const tweetsRouter = require('./controllers/tweets');
 const middleware = require('./middleware');
+const { CORS_ORIGIN } = require('./utils/config');
 
 const app = express();
 
@@ -15,7 +16,12 @@ connectDB();
 
 /** Middlewares */
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: CORS_ORIGIN,
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  }),
+);
 app.use(express.json());
 app.use(middleware.tokenExtractor);
 
