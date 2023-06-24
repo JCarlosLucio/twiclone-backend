@@ -9,6 +9,10 @@
 
 To run add a `.env` file with the environment variables from `.env.examples`.
 
+### Prerequisites
+
+- node >= 16.0
+
 ### Install
 
 ```sh
