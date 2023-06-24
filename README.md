@@ -52,6 +52,7 @@ Runs all the tests.
 
 ## Lessons Learned
 
+- Creating an [ExpressJS](https://expressjs.com/) server.
 - Using [MongoDB](https://www.mongodb.com/) with
   [mongoose](https://mongoosejs.com/).
 - Handling authentication/authorization with [JWTs](https://jwt.io/).
