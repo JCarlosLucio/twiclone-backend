@@ -46,6 +46,21 @@ npm run test
 
 Runs all the tests.
 
+## 🚀 Deployment
+
+1. Link github repo to [Render](https://render.com/).
+2. Set `ROOT DIRECTORY` as `root` (default).
+3. Override `BUILD COMMAND` with:
+
+```sh
+npm ci
+```
+
+4. Add `HEALTH CHECK PATH` to `/ping`.
+5. Add `server environment variables` from `.env.example`.
+6. Add `NODE_VERSION` with desired version (node >=16.0.0) to environment
+   variables. Otherwise it defaults to `14.17.5`.
+
 ## TODO
 
 - Add documentation for all `routes`.
