@@ -11,7 +11,7 @@ const User = require('../models/user');
 router.post('/register', validate(register), async (req, res) => {
   const { name, username, email, password } = req.body;
   const avatar = {
-    url: `https://avatars.dicebear.com/api/bottts/${username}.svg`,
+    url: `https://robohash.org/${username}.png`,
     filename: null,
   };
 
